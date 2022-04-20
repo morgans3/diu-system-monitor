@@ -1,0 +1,7 @@
+node_modules
+
+sorry-cypress/*
+
+cypress/fixtures/*
+cypress/screenshots/*
+cypress/videos/*
