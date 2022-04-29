@@ -6,13 +6,13 @@ This codebase is an implementation of Sorry Cypress server for storing results o
 
 ### Rationale and Objectives
 
-Routine testing of the systems we deploy is essential for a timely and efficient response to errors and ensures minimal downtime. This is crucial to running a clinical system and ensures compliance with best practice (https://aws.amazon.com/blogs/apn/the-6-pillars-of-the-aws-well-architected-framework/).
+Routine testing of the systems we deploy is essential for a timely and efficient response to errors and ensures minimal downtime. This is crucial to running a clinical system and ensures compliance with best practice (<https://aws.amazon.com/blogs/apn/the-6-pillars-of-the-aws-well-architected-framework/>).
 
 There are different types of test and different levels of testing. Most tests can fall into a category of either Unit testing or Integration testing: i.e. can a thing work and can things work together.
 
 Whilst the built in testing library Protractor performs a nice role in Angular testing, its most suitable use-case for us is to perform Unit testing. Coding a basic spec.ts file for each component that runs a "can create" test will ensure that the application will build and compile.
 
-However more functional tests can be created for both Unit testing and Integration by using the Cypress library (https://docs.cypress.io/api/table-of-contents). By using this library, we have the added benefit of being able to easily abstract our test files from the codebase itself. This allows us to do more than test during a development sprint or during a deployment pipeline.
+However more functional tests can be created for both Unit testing and Integration by using the Cypress library (<https://docs.cypress.io/api/table-of-contents>). By using this library, we have the added benefit of being able to easily abstract our test files from the codebase itself. This allows us to do more than test during a development sprint or during a deployment pipeline.
 
 By removing the dependency on the codebase for the tests to run, we can carry out Canary-style testing on our live systems (production and development), routinely to ensure all systems are running as expected. This application is designed to provide those routine tests.
 
@@ -50,18 +50,18 @@ This folder is the core files that cypress uses for testing. Any spec.ts files y
 
 - TBC
 
-### Instructions for running locally
+### Instructions for sorry-cypress running locally
 
 - Ensure you have the latest Docker and docker-compose installed
 - run command `docker-compose -f ./docker-compose.minio.yml up`
 - Update etc/hosts file to include: `127.0.0.1 storage` this is to store videos/images
-- Further instructions on managing locally can be found here: https://docs.sorry-cypress.dev/guide/get-started and https://docs.sorry-cypress.dev/guide/dashboard-and-api
+- Further instructions on managing locally can be found here: <https://docs.sorry-cypress.dev/guide/get-started> and <https://docs.sorry-cypress.dev/guide/dashboard-and-api>
 
-#### After successfully running docker-compose, we have:
+#### After successfully running docker-compose, we have
 
-- director service on http://localhost:1234
-- API service on http://localhost:4000
-- Dashboard running on http://localhost:8080
+- director service on <http://localhost:1234>
+- API service on <http://localhost:4000>
+- Dashboard running on <http://localhost:8080>
 
 ## Terms of Use
 

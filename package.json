@@ -1,17 +1,23 @@
 {
-  "name": "diu-system-monitor",
-  "main": "app.js",
-  "version": "1.0.0",
-  "scripts": {
-    "app": "node app.js",
-    "test-server": "node cypressrun.js && cypress run --record --key system_heartbeat",
-    "test-local": "node cypressrun.js && cypress open"
-  },
-  "dependencies": {
-    "cy2": "^1.3.0",
-    "cypress": "^9.4.1"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.25"
-  }
+    "name": "diu-system-monitor",
+    "main": "app.js",
+    "version": "1.0.0",
+    "scripts": {
+        "app": "node app.js",
+        "test-server": "node cypressrun.js && cypress run --record --key diu-system-monitor",
+        "test-local": "node cypressrun.js && cypress open"
+    },
+    "dependencies": {
+        "cy2": "^1.3.0",
+        "cypress": "^9.4.1"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.25",
+        "eslint": "^8.14.0",
+        "eslint-config-standard": "^17.0.0",
+        "eslint-plugin-cypress": "^2.12.1",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-n": "^15.2.0",
+        "eslint-plugin-promise": "^6.0.0"
+    }
 }
