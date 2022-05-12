@@ -35,52 +35,55 @@ describe("Test UserProfile API calls", () => {
     });
   });
 
-  // it('attempt to test all "get all" endpoints data', () => {
+  it('attempt to test all "get all" endpoints data', () => {
+    Object.keys(objAllEndpoints).forEach((apiTag) => {
+      let arrEndpoints = objAllEndpoints[apiTag];
+      console.log("New endpoints");
+      console.log(apiTag);
+      arrEndpoints.forEach((endpointData) => {
+        console.log(endpointData.endpoint);
+        // let arrEndpointData = endpointData.endpoint.split("/");
+        // let lastInput = arrEndpointData[arrEndpointData.length - 1];
+        // if ((!lastInput || lastInput[0] == "?") && arrEndpointData.length < 4) {
+        //   cy.testGetAll(endpointData, JWT).then((response) => {
+        //     if (response) {
+        //       cy.expect(response.status).to.oneOf([200, 304]);
+        //     }
+        //   });
+        // }
+      });
+    });
+  });
+
+  // it('attempt to test all "create" endpoints data', () => {
   //   Object.keys(objAllEndpoints).forEach((apiTag) => {
   //     let arrEndpoints = objAllEndpoints[apiTag];
   //     arrEndpoints.forEach((endpointData) => {
   //       let arrEndpointData = endpointData.endpoint.split("/");
   //       let lastInput = arrEndpointData[arrEndpointData.length - 1];
-  //       if ((!lastInput || lastInput[0] == "?") && arrEndpointData.length < 4) {
-  //         cy.testGetAll(endpointData, JWT).then((response) => {
-  //           if (response) {
+  //       if (lastInput && lastInput == "create") {
+  //         cy.log(apiTag + ": " + endpointData.endpoint);
+  //         cy.testCreate(endpointData, JWT).then((response) => {
+  //           if (
+  //             response &&
+  //             typeof response != "undefined" &&
+  //             typeof response != "string"
+  //           ) {
+  //             console.log(apiTag + ": " + endpointData.endpoint);
+  //             console.log("response.body");
+  //             console.log(response.body);
   //             cy.expect(response.status).to.oneOf([200, 304]);
+  //             if (response.body && response.body.data) {
+  //               objCreatedData[apiTag] = response.body.data;
+  //               console.log(objCreatedData);
+  //             }
   //           }
   //         });
   //       }
   //     });
   //   });
+  // console.log(objCreatedData);
   // });
-
-  it('attempt to test all "create" endpoints data', () => {
-    Object.keys(objAllEndpoints).forEach((apiTag) => {
-      let arrEndpoints = objAllEndpoints[apiTag];
-      arrEndpoints.forEach((endpointData) => {
-        let arrEndpointData = endpointData.endpoint.split("/");
-        let lastInput = arrEndpointData[arrEndpointData.length - 1];
-        if (lastInput && lastInput == "create") {
-          cy.log(apiTag + ": " + endpointData.endpoint);
-          cy.testCreate(endpointData, JWT).then((response) => {
-            if (
-              response &&
-              typeof response != "undefined" &&
-              typeof response != "string"
-            ) {
-              console.log(apiTag + ": " + endpointData.endpoint);
-              console.log("response.body");
-              console.log(response.body);
-              cy.expect(response.status).to.oneOf([200, 304]);
-              if (response.body && response.body.data) {
-                objCreatedData[apiTag] = response.body.data;
-                console.log(objCreatedData);
-              }
-            }
-          });
-        }
-      });
-    });
-    // console.log(objCreatedData);
-  });
 });
 
 // if (lastInput && lastInput == "{id}") {
