@@ -7,3 +7,5 @@ cypress/screenshots/*
 cypress/videos/*
 
 data/*
+
+cypress.env.json

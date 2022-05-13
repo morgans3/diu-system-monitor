@@ -1,6 +1,24 @@
-import { Console } from "console";
 const { faker } = require("@faker-js/faker");
+const AWSHelper = require("../classes/aws");
+
 import { _settings } from "../../settings";
+
+Cypress.Commands.add("getAccounts", async () => {
+  try {
+    let userData = {};
+    const userAccounts = JSON.parse(
+      await AWSHelper.getSecrets("cypressaccounts")
+    );
+    // console.log(userAccounts);
+    userData.username = userAccounts.admin_username;
+    userData.password = userAccounts.admin_password;
+    userData.organisation = "Collaborative Partners";
+    userData.authentication = "Demo";
+    return userData;
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 Cypress.Commands.add("swaggerAuth", (jwttoken, page) => {
   cy.visit(page);
@@ -16,39 +34,17 @@ Cypress.Commands.add("swaggerAuth", (jwttoken, page) => {
   cy.get("button.btn.modal-btn.auth.button.btn-done").contains("Close").click();
 });
 
-Cypress.Commands.add("getJWT", () => {
-  cy.visit(_settings.baseURL + "/api-docs");
-  cy.fixture("alexUser").then((user) => {
-    cy.intercept("/users/authenticate").as("getToken");
-    cy.get("#operations-Users-post_users_authenticate").click();
-    cy.get(
-      "#operations-Users-post_users_authenticate button.btn.try-out__btn"
-    ).click();
-
-    cy.get(
-      "#operations-Users-post_users_authenticate input[placeholder='username']"
-    ).type(user.username);
-    cy.get(
-      "#operations-Users-post_users_authenticate input[placeholder='password']"
-    ).type(user.password);
-    cy.get(
-      "#operations-Users-post_users_authenticate input[placeholder='organisation']"
-    ).type(user.organisation);
-    cy.get(
-      "#operations-Users-post_users_authenticate input[placeholder='authentication']"
-    ).type(user.authentication);
-
-    cy.get(
-      "#operations-Users-post_users_authenticate button.btn.execute.opblock-control__btn"
-    )
-      .click()
-      .wait("@getToken")
-      .then((interceptedData) => {
-        expect(interceptedData.response.statusCode).to.eq(200);
-        if (interceptedData.response.body.token) {
-          return interceptedData.response.body.token;
-        }
-      });
+Cypress.Commands.add("getJWT", (userData) => {
+  let requestConfig = {
+    method: "post",
+    url: _settings.baseURL + "/users/authenticate",
+    body: userData,
+  };
+  cy.request(requestConfig).then((response) => {
+    expect(response.status).to.eq(200);
+    if (response.body.token) {
+      return response.body.token;
+    }
   });
 });
 
@@ -243,8 +239,8 @@ Cypress.Commands.add("testCreate", (endpointData, JWT) => {
       !requestConfig.url.includes("capabilities/create") &&
       !requestConfig.url.includes("/roles/create") &&
       !requestConfig.url.includes("/roles/links/create") &&
-      !requestConfig.url.includes("/mfa/create")
-      // requestConfig.url.includes("userprofiles/create")
+      !requestConfig.url.includes("/mfa/create") &&
+      !requestConfig.url.includes("users/create")
     ) {
       console.log("requestConfig");
       console.log(requestConfig);

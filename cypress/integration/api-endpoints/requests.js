@@ -4,11 +4,20 @@ import { _settings } from "../../../settings";
 
 describe("Test UserProfile API calls", () => {
   let objAllEndpoints = {};
+  let userDetails = {};
   let JWT = "";
   let objCreatedData = {};
 
+  it("attempt to get account data", () => {
+    cy.getAccounts().then((accountData) => {
+      console.log(accountData);
+      cy.log(accountData);
+      userDetails = accountData;
+    });
+  });
+
   it("attempt to get JWT", () => {
-    cy.getJWT().then((jwtToken) => {
+    cy.getJWT(userDetails).then((jwtToken) => {
       JWT = "JWT " + jwtToken;
       console.log(JWT);
     });
@@ -35,6 +44,10 @@ describe("Test UserProfile API calls", () => {
     });
   });
 
+  it("show endpoint data", () => {
+    console.log(objAllEndpoints);
+  });
+
   it('attempt to test all "get all" endpoints data', () => {
     Object.keys(objAllEndpoints).forEach((apiTag) => {
       let arrEndpoints = objAllEndpoints[apiTag];
@@ -42,15 +55,15 @@ describe("Test UserProfile API calls", () => {
       console.log(apiTag);
       arrEndpoints.forEach((endpointData) => {
         console.log(endpointData.endpoint);
-        // let arrEndpointData = endpointData.endpoint.split("/");
-        // let lastInput = arrEndpointData[arrEndpointData.length - 1];
-        // if ((!lastInput || lastInput[0] == "?") && arrEndpointData.length < 4) {
-        //   cy.testGetAll(endpointData, JWT).then((response) => {
-        //     if (response) {
-        //       cy.expect(response.status).to.oneOf([200, 304]);
-        //     }
-        //   });
-        // }
+        let arrEndpointData = endpointData.endpoint.split("/");
+        let lastInput = arrEndpointData[arrEndpointData.length - 1];
+        if ((!lastInput || lastInput[0] == "?") && arrEndpointData.length < 4) {
+          cy.testGetAll(endpointData, JWT).then((response) => {
+            if (response) {
+              cy.expect(response.status).to.oneOf([200, 304]);
+            }
+          });
+        }
       });
     });
   });
