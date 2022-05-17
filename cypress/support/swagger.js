@@ -5,15 +5,23 @@ import { _settings } from "../../settings";
 
 Cypress.Commands.add("getAccounts", async () => {
   try {
-    let userData = {};
+    let userData = {
+      userData: {},
+      adminUserData: {},
+    };
     const userAccounts = JSON.parse(
       await AWSHelper.getSecrets("cypressaccounts")
     );
-    // console.log(userAccounts);
-    userData.username = userAccounts.admin_username;
-    userData.password = userAccounts.admin_password;
-    userData.organisation = "Collaborative Partners";
-    userData.authentication = "Demo";
+    //non admin user
+    userData.userData.username = userAccounts.username;
+    userData.userData.password = userAccounts.password;
+    userData.userData.organisation = "Collaborative Partners";
+    userData.userData.authentication = "Demo";
+    //admin user
+    userData.adminUserData.username = userAccounts.admin_username;
+    userData.adminUserData.password = userAccounts.admin_password;
+    userData.adminUserData.organisation = "Collaborative Partners";
+    userData.adminUserData.authentication = "Demo";
     return userData;
   } catch (error) {
     console.error(error);
@@ -212,11 +220,6 @@ Cypress.Commands.add("testGetAll", (endpointData, JWT) => {
   }
 });
 
-Cypress.Commands.add("testGetByID", (endpointData, JWT) => {
-  // console.log(endpointData);
-  return "get by id";
-});
-
 Cypress.Commands.add("testCreate", (endpointData, JWT) => {
   if (endpointData.parameters && endpointData.parameters.length) {
     let bodyParams = {};
@@ -255,14 +258,152 @@ Cypress.Commands.add("testCreate", (endpointData, JWT) => {
   }
 });
 
-Cypress.Commands.add("testUpdate", (endpointData, JWT) => {
-  // console.log(endpointData);
-  return "update";
+Cypress.Commands.add("getSwaggerData", (tag, testingEndpoint) => {
+  let swaggerData = {};
+  cy.request(_settings.baseURL + "/swagggerjson").then((swagggerResponse) => {
+    cy.expect(swagggerResponse.status).to.oneOf([200, 304]);
+    if (swagggerResponse.body && swagggerResponse.body.paths) {
+      let swagggerResponseData = swagggerResponse.body.paths;
+      Object.keys(swagggerResponseData).forEach((endpoint) => {
+        Object.keys(swagggerResponseData[endpoint]).forEach((requestType) => {
+          let APIInformation = swagggerResponseData[endpoint][requestType];
+          APIInformation["endpoint"] = endpoint;
+          APIInformation["requestType"] = requestType;
+          if (
+            APIInformation.tags.includes(tag) &&
+            endpoint == testingEndpoint
+          ) {
+            swaggerData = APIInformation;
+          }
+        });
+      });
+    }
+    return swaggerData;
+  });
 });
 
-Cypress.Commands.add("testDelete", (endpointData, JWT) => {
-  // console.log(endpointData);
-  return "delete";
+Cypress.Commands.add("getAll", (endpointData, JWT) => {
+  let requestConfig = {
+    method: endpointData.requestType,
+    url: _settings.baseURL + endpointData.endpoint,
+    failOnStatusCode: false,
+  };
+  if (JWT) {
+    requestConfig.headers = {
+      Authorization: JWT,
+    };
+  }
+  cy.request(requestConfig).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add("getByID", (endpointData, JWT, id) => {
+  let requestConfig = {
+    method: endpointData.requestType,
+    url: _settings.baseURL + endpointData.endpoint,
+    failOnStatusCode: false,
+  };
+  if (JWT) {
+    requestConfig.headers = {
+      Authorization: JWT,
+    };
+  }
+  requestConfig.url = requestConfig.url.replace("{id}", id);
+  cy.request(requestConfig).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add("createFixture", (endpointData) => {
+  console.log(endpointData);
+  let bodyParams = {};
+  if (endpointData.parameters && endpointData.parameters.length) {
+    endpointData.parameters.forEach((data) => {
+      bodyParams[data.name] = fakerData(data);
+    });
+  }
+  console.log(bodyParams);
+  return bodyParams;
+});
+
+Cypress.Commands.add("createFailFixture", (endpointData) => {
+  console.log(endpointData);
+  let bodyParams = {};
+  if (endpointData.parameters && endpointData.parameters.length) {
+    endpointData.parameters.forEach((data) => {
+      bodyParams[data.name] = wrongFakerData(data);
+    });
+  }
+  console.log(bodyParams);
+  return bodyParams;
+});
+
+Cypress.Commands.add("getRandomString", (endpointData) => {
+  return fakerData({ type: "sting", name: "string" });
+});
+
+Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
+  let requestConfig = {
+    method: endpointData.requestType,
+    url: _settings.baseURL + endpointData.endpoint,
+    failOnStatusCode: false,
+  };
+  if (JWT) {
+    requestConfig.headers = {
+      Authorization: JWT,
+    };
+  }
+  if (bodyParams) {
+    requestConfig.body = bodyParams;
+  }
+  console.log(requestConfig);
+  cy.request(requestConfig).then((response) => {
+    console.log(response);
+    return response;
+  });
+});
+
+Cypress.Commands.add("update", (endpointData, JWT, bodyParams) => {
+  let requestConfig = {
+    method: endpointData.requestType,
+    url: _settings.baseURL + endpointData.endpoint,
+    failOnStatusCode: false,
+  };
+  if (JWT) {
+    requestConfig.headers = {
+      Authorization: JWT,
+    };
+  }
+  if (bodyParams) {
+    requestConfig.body = bodyParams;
+  }
+  console.log(requestConfig);
+  cy.request(requestConfig).then((response) => {
+    console.log(response);
+    return response;
+  });
+});
+
+Cypress.Commands.add("delete", (endpointData, JWT, bodyParams) => {
+  let requestConfig = {
+    method: endpointData.requestType,
+    url: _settings.baseURL + endpointData.endpoint,
+    failOnStatusCode: false,
+  };
+  if (JWT) {
+    requestConfig.headers = {
+      Authorization: JWT,
+    };
+  }
+  if (bodyParams) {
+    requestConfig.body = bodyParams;
+  }
+  console.log(requestConfig);
+  cy.request(requestConfig).then((response) => {
+    console.log(response);
+    return response;
+  });
 });
 
 function fakerData(data) {
@@ -308,5 +449,29 @@ function fakerData(data) {
         default:
           return faker.lorem.word();
       }
+  }
+}
+
+function wrongFakerData(data) {
+  switch (data.type) {
+    case "integer":
+    case "number":
+      return faker.datatype.boolean();
+    case "boolean":
+      return faker.datatype.number().toString();
+    case "date":
+      let newData = {};
+      let key = fakerData({ type: "string", name: "" });
+      let value = fakerData({ type: "string", name: "" });
+      newData['"' + key + '"'] = value;
+      return newData;
+    case "object":
+      return faker.date.recent();
+    case "array":
+      return faker.datatype.number().toString();
+    case "string":
+    default:
+      return faker.datatype.boolean();
+      break;
   }
 }

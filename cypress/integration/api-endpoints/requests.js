@@ -5,7 +5,8 @@ import { _settings } from "../../../settings";
 describe("Test UserProfile API calls", () => {
   let objAllEndpoints = {};
   let userDetails = {};
-  let JWT = "";
+  let userJWT = "";
+  let adminJWT = "";
   let objCreatedData = {};
 
   it("attempt to get account data", () => {
@@ -16,10 +17,14 @@ describe("Test UserProfile API calls", () => {
     });
   });
 
-  it("attempt to get JWT", () => {
-    cy.getJWT(userDetails).then((jwtToken) => {
-      JWT = "JWT " + jwtToken;
-      console.log(JWT);
+  it("attempt to get JWT's", () => {
+    cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
+      adminJWT = "JWT " + jwtToken;
+      console.log(adminJWT);
+    });
+    cy.getJWT(userDetails.userData).then((jwtToken) => {
+      userJWT = "JWT " + jwtToken;
+      console.log(userJWT);
     });
   });
 
