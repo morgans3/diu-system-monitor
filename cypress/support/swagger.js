@@ -74,7 +74,7 @@ Cypress.Commands.add("getSwaggerData", (tag, testingEndpoint) => {
 });
 
 Cypress.Commands.add("getAll", (endpointData, JWT) => {
-    let requestConfig = {
+    const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
         failOnStatusCode: false,
@@ -90,7 +90,7 @@ Cypress.Commands.add("getAll", (endpointData, JWT) => {
 });
 
 Cypress.Commands.add("getByID", (endpointData, JWT, id) => {
-    let requestConfig = {
+    const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
         failOnStatusCode: false,
@@ -131,7 +131,7 @@ Cypress.Commands.add("getRandomString", (endpointData) => {
 });
 
 Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
-    let requestConfig = {
+    const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
         failOnStatusCode: false,
@@ -150,7 +150,7 @@ Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
 });
 
 Cypress.Commands.add("update", (endpointData, JWT, bodyParams) => {
-    let requestConfig = {
+    const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
         failOnStatusCode: false,
@@ -169,7 +169,7 @@ Cypress.Commands.add("update", (endpointData, JWT, bodyParams) => {
 });
 
 Cypress.Commands.add("delete", (endpointData, JWT, bodyParams) => {
-    let requestConfig = {
+    const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
         failOnStatusCode: false,
@@ -197,14 +197,14 @@ function fakerData(data) {
         case "date":
             return faker.date.recent();
         case "object":
-            var newData = {};
-            var key = fakerData({ type: "string", name: "" });
-            var value = fakerData({ type: "string", name: "" });
+            const newData = {};
+            const key = fakerData({ type: "string", name: "" });
+            const value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
         case "array":
             return [];
-            return fakerData({ type: "string", name: "" }) + ", " + fakerData({ type: "string", name: "" });
+        // return fakerData({ type: "string", name: "" }) + ", " + fakerData({ type: "string", name: "" });
         case "string":
         default:
             switch (data.name.toLowerCase()) {
@@ -237,9 +237,9 @@ function wrongFakerData(data) {
         case "boolean":
             return faker.datatype.number().toString();
         case "date":
-            var newData = {};
-            var key = fakerData({ type: "string", name: "" });
-            var value = fakerData({ type: "string", name: "" });
+            const newData = {};
+            const key = fakerData({ type: "string", name: "" });
+            const value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
         case "object":
@@ -249,6 +249,5 @@ function wrongFakerData(data) {
         case "string":
         default:
             return faker.datatype.boolean();
-            break;
     }
 }
