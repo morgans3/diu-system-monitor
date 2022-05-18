@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
-describe("AtomicPayloads - '/atomic/payloads/create'", () => {
-    const tag = "AtomicPayloads";
-    const testingEndpoint = "/atomic/payloads/create";
+
+describe("Atomic Formdata - '/atomic/formdata/delete'", () => {
+    const tag = "Atomic Formdata";
+    const testingEndpoint = "/atomic/formdata/delete";
     let objSwaggerData = {};
     let userDetails = {};
     const replaceData = {
@@ -9,8 +10,19 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
         failReplaceData: {},
     };
     const bodyParams = {
-        bodyParams: {},
-        bodyParamsFail: {},
+        bodyParams: {
+            id: "voluptas",
+            type: "est",
+        },
+        bodyParamsFail: {
+            id: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
+            type: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
+            config: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
+        },
+        bodyParamsBadPayload: {
+            type: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
+            config: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
+        },
     };
     const JWTs = {
         userJWT: "",
@@ -35,18 +47,6 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     it("get endpoint information from swagggerjson", () => {
         cy.getSwaggerData(tag, testingEndpoint).then((swaggerData) => {
             objSwaggerData = swaggerData;
-        });
-    });
-
-    it("prepare fixture data", () => {
-        cy.createFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParams = data;
-        });
-    });
-
-    it("prepare fail fixture data", () => {
-        cy.createFailFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParamsFail = data;
         });
     });
 

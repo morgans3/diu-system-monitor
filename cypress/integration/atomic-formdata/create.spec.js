@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
-describe("AtomicPayloads - '/atomic/payloads/create'", () => {
-    const tag = "AtomicPayloads";
-    const testingEndpoint = "/atomic/payloads/create";
+
+describe("Atomic Formdata - '/atomic/formdata/create'", () => {
+    const tag = "Atomic Formdata";
+    const testingEndpoint = "/atomic/formdata/create";
     let objSwaggerData = {};
     let userDetails = {};
     const replaceData = {

@@ -1,31 +1,5 @@
 import { settings } from "../../settings";
 
-const { faker } = require("@faker-js/faker");
-const AWSHelper = require("../classes/aws");
-
-Cypress.Commands.add("getAccounts", async () => {
-    try {
-        const userData = {
-            userData: {},
-            adminUserData: {},
-        };
-        const userAccounts = JSON.parse(await AWSHelper.getSecrets("cypressaccounts"));
-        // non admin user
-        userData.userData.username = userAccounts.username;
-        userData.userData.password = userAccounts.password;
-        userData.userData.organisation = "Collaborative Partners";
-        userData.userData.authentication = "Demo";
-        // admin user
-        userData.adminUserData.username = userAccounts.admin_username;
-        userData.adminUserData.password = userAccounts.admin_password;
-        userData.adminUserData.organisation = "Collaborative Partners";
-        userData.adminUserData.authentication = "Demo";
-        return userData;
-    } catch (error) {
-        console.error(error);
-    }
-});
-
 Cypress.Commands.add("swaggerAuth", (jwttoken, page) => {
     cy.visit(page);
     // Find the auth button
@@ -73,30 +47,6 @@ Cypress.Commands.add("getSwaggerData", (tag, testingEndpoint) => {
     });
 });
 
-Cypress.Commands.add("createFixture", (endpointData) => {
-    const bodyParams = {};
-    if (endpointData.parameters && endpointData.parameters.length) {
-        endpointData.parameters.forEach((data) => {
-            bodyParams[data.name] = fakerData(data);
-        });
-    }
-    return bodyParams;
-});
-
-Cypress.Commands.add("createFailFixture", (endpointData) => {
-    const bodyParams = {};
-    if (endpointData.parameters && endpointData.parameters.length) {
-        endpointData.parameters.forEach((data) => {
-            bodyParams[data.name] = wrongFakerData(data);
-        });
-    }
-    return bodyParams;
-});
-
-Cypress.Commands.add("getRandomString", (endpointData) => {
-    return fakerData({ type: "sting", name: "string" });
-});
-
 Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) => {
     const requestConfig = {
         method: endpointData.requestType,
@@ -122,69 +72,47 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     });
 });
 
-function fakerData(data) {
-    switch (data.type) {
-        case "integer":
-        case "number":
-            return faker.datatype.number().toString();
-        case "boolean":
-            return faker.datatype.boolean();
-        case "date":
-            return faker.date.recent();
-        case "object": {
-            const newData = {};
-            const key = fakerData({ type: "string", name: "" });
-            const value = fakerData({ type: "string", name: "" });
-            newData['"' + key + '"'] = value;
-            return newData;
+Cypress.Commands.add("testEndpointResponses", (objSwaggerData, JWTs, bodyParams, replaceData) => {
+    Object.keys(objSwaggerData.responses).forEach((responseStatus) => {
+        let JWT = "";
+        switch (responseStatus) {
+            case "200":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([200, 304]);
+                });
+                break;
+            case "401":
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([401]);
+                });
+                break;
+            case "403":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.userJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([403, 400]);
+                });
+                break;
+            case "400":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([400]);
+                });
+                break;
+            case "404":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsFail, replaceData.failReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([404]);
+                });
+                break;
         }
-        case "array":
-            return [];
-        // return fakerData({ type: "string", name: "" }) + ", " + fakerData({ type: "string", name: "" });
-        case "string":
-        default:
-            switch (data.name.toLowerCase()) {
-                case "phone":
-                case "phonenumber":
-                    return faker.phone.phoneNumber();
-                case "email":
-                    return faker.internet.email();
-                case "firstname":
-                    return faker.name.firstName();
-                case "lastname":
-                    return faker.name.lastName();
-                case "name":
-                    return faker.name.firstName() + " " + faker.name.lastName();
-                case "date":
-                case "startdate":
-                case "enddate":
-                    return faker.date.recent();
-                default:
-                    return faker.lorem.word();
-            }
-    }
-}
-
-function wrongFakerData(data) {
-    switch (data.type) {
-        case "integer":
-        case "number":
-            return faker.datatype.boolean();
-        case "boolean":
-            return faker.datatype.number().toString();
-        case "date": {
-            const newData = {};
-            const key = fakerData({ type: "string", name: "" });
-            const value = fakerData({ type: "string", name: "" });
-            newData['"' + key + '"'] = value;
-            return newData;
-        }
-        case "object":
-            return faker.date.recent();
-        case "array":
-            return faker.datatype.number().toString();
-        case "string":
-        default:
-            return faker.datatype.boolean();
-    }
-}
+    });
+});

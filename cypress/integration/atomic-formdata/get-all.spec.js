@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
-describe("AtomicPayloads - '/atomic/payloads/create'", () => {
-    const tag = "AtomicPayloads";
-    const testingEndpoint = "/atomic/payloads/create";
+
+describe("Atomic Formdata - '/atomic/formdata/'", () => {
+    const tag = "Atomic Formdata";
+    const testingEndpoint = "/atomic/formdata";
     let objSwaggerData = {};
     let userDetails = {};
     const replaceData = {
@@ -35,18 +36,6 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     it("get endpoint information from swagggerjson", () => {
         cy.getSwaggerData(tag, testingEndpoint).then((swaggerData) => {
             objSwaggerData = swaggerData;
-        });
-    });
-
-    it("prepare fixture data", () => {
-        cy.createFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParams = data;
-        });
-    });
-
-    it("prepare fail fixture data", () => {
-        cy.createFailFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParamsFail = data;
         });
     });
 
