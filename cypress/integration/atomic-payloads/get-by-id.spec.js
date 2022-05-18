@@ -22,9 +22,6 @@ describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
     });
 
     it("get admin/ user JWT logging into system with AWS data", () => {
-        cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
-            adminJWT = "JWT " + jwtToken;
-        });
         cy.getJWT(userDetails.userData).then((jwtToken) => {
             userJWT = "JWT " + jwtToken;
         });

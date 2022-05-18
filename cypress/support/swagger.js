@@ -113,7 +113,7 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     }
     if (replaceData) {
         Object.keys(replaceData).forEach((find) => {
-            let replace = replaceData[find];
+            const replace = replaceData[find];
             requestConfig.url = requestConfig.url.replace(find, replace);
         });
     }
