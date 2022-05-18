@@ -5,3 +5,7 @@ sorry-cypress/*
 cypress/fixtures/*
 cypress/screenshots/*
 cypress/videos/*
+
+data/*
+
+cypress.env.json
