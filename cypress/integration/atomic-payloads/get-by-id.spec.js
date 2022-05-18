@@ -13,7 +13,6 @@ describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
     let objSwaggerData = {};
     let userDetails = {};
     let userJWT = "";
-    let adminJWT = "";
 
     it("Get admin/ user credentials from AWS", () => {
         cy.getAccounts().then((accountData) => {
