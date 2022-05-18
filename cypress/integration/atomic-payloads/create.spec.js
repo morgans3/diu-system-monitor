@@ -1,8 +1,4 @@
 /// <reference types="cypress" />
-
-import { fail } from "assert";
-import { _settings } from "../../../settings";
-
 describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     const tag = "AtomicPayloads";
     const testingEndpoint = "/atomic/payloads/create";
