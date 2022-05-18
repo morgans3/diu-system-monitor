@@ -122,6 +122,51 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     });
 });
 
+Cypress.Commands.add("testEndpointResponses", (objSwaggerData, JWTs, bodyParams, replaceData) => {
+    Object.keys(objSwaggerData.responses).forEach((responseStatus) => {
+        let JWT = "";
+        switch (responseStatus) {
+            case "200":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([200, 304]);
+                });
+                break;
+            case "401":
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([401]);
+                });
+                break;
+            case "403":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.userJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([403, 400]);
+                });
+                break;
+            case "400":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([400]);
+                });
+                break;
+            case "404":
+                if (objSwaggerData.security.length > 0) {
+                    JWT = JWTs.adminJWT;
+                }
+                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsFail, replaceData.failReplaceData).then((testResponse) => {
+                    cy.expect(testResponse.status).to.oneOf([404]);
+                });
+                break;
+        }
+    });
+});
+
 function fakerData(data) {
     switch (data.type) {
         case "integer":

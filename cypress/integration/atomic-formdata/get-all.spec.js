@@ -5,7 +5,18 @@ describe("Atomic Formdata - '/atomic/formdata/'", () => {
     const testingEndpoint = "/atomic/formdata";
     let objSwaggerData = {};
     let userDetails = {};
-    let userJWT = "";
+    const replaceData = {
+        passReplaceData: {},
+        failReplaceData: {},
+    };
+    const bodyParams = {
+        bodyParams: {},
+        bodyParamsFail: {},
+    };
+    const JWTs = {
+        userJWT: "",
+        adminJWT: "",
+    };
 
     it("Get admin/ user credentials from AWS", () => {
         cy.getAccounts().then((accountData) => {
@@ -14,8 +25,11 @@ describe("Atomic Formdata - '/atomic/formdata/'", () => {
     });
 
     it("get admin/ user JWT logging into system with AWS data", () => {
+        cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
+            JWTs.adminJWT = "JWT " + jwtToken;
+        });
         cy.getJWT(userDetails.userData).then((jwtToken) => {
-            userJWT = "JWT " + jwtToken;
+            JWTs.userJWT = "JWT " + jwtToken;
         });
     });
 
@@ -26,15 +40,6 @@ describe("Atomic Formdata - '/atomic/formdata/'", () => {
     });
 
     it("test against each status", () => {
-        Object.keys(objSwaggerData.responses).forEach((responseStatus) => {
-            console.log(objSwaggerData.responses[responseStatus]);
-            switch (responseStatus) {
-                case "200":
-                    cy.apiRequest(objSwaggerData, userJWT).then((testResponse) => {
-                        cy.expect(testResponse.status).to.oneOf([200, 304]);
-                    });
-                    break;
-            }
-        });
+        cy.testEndpointResponses(objSwaggerData, JWTs, bodyParams, replaceData);
     });
 });
