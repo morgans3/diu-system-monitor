@@ -73,39 +73,6 @@ Cypress.Commands.add("getSwaggerData", (tag, testingEndpoint) => {
     });
 });
 
-Cypress.Commands.add("getAll", (endpointData, JWT) => {
-    const requestConfig = {
-        method: endpointData.requestType,
-        url: settings.baseURL + endpointData.endpoint,
-        failOnStatusCode: false,
-    };
-    if (JWT) {
-        requestConfig.headers = {
-            Authorization: JWT,
-        };
-    }
-    cy.request(requestConfig).then((response) => {
-        return response;
-    });
-});
-
-Cypress.Commands.add("getByID", (endpointData, JWT, id) => {
-    const requestConfig = {
-        method: endpointData.requestType,
-        url: settings.baseURL + endpointData.endpoint,
-        failOnStatusCode: false,
-    };
-    if (JWT) {
-        requestConfig.headers = {
-            Authorization: JWT,
-        };
-    }
-    requestConfig.url = requestConfig.url.replace("{id}", id);
-    cy.request(requestConfig).then((response) => {
-        return response;
-    });
-});
-
 Cypress.Commands.add("createFixture", (endpointData) => {
     const bodyParams = {};
     if (endpointData.parameters && endpointData.parameters.length) {
@@ -130,7 +97,7 @@ Cypress.Commands.add("getRandomString", (endpointData) => {
     return fakerData({ type: "sting", name: "string" });
 });
 
-Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
+Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) => {
     const requestConfig = {
         method: endpointData.requestType,
         url: settings.baseURL + endpointData.endpoint,
@@ -144,43 +111,11 @@ Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
     if (bodyParams) {
         requestConfig.body = bodyParams;
     }
-    cy.request(requestConfig).then((response) => {
-        return response;
-    });
-});
-
-Cypress.Commands.add("update", (endpointData, JWT, bodyParams) => {
-    const requestConfig = {
-        method: endpointData.requestType,
-        url: settings.baseURL + endpointData.endpoint,
-        failOnStatusCode: false,
-    };
-    if (JWT) {
-        requestConfig.headers = {
-            Authorization: JWT,
-        };
-    }
-    if (bodyParams) {
-        requestConfig.body = bodyParams;
-    }
-    cy.request(requestConfig).then((response) => {
-        return response;
-    });
-});
-
-Cypress.Commands.add("delete", (endpointData, JWT, bodyParams) => {
-    const requestConfig = {
-        method: endpointData.requestType,
-        url: settings.baseURL + endpointData.endpoint,
-        failOnStatusCode: false,
-    };
-    if (JWT) {
-        requestConfig.headers = {
-            Authorization: JWT,
-        };
-    }
-    if (bodyParams) {
-        requestConfig.body = bodyParams;
+    if (replaceData) {
+        Object.keys(replaceData).forEach((find) => {
+            let replace = replaceData[find];
+            requestConfig.url = requestConfig.url.replace(find, replace);
+        });
     }
     cy.request(requestConfig).then((response) => {
         return response;
@@ -196,12 +131,13 @@ function fakerData(data) {
             return faker.datatype.boolean();
         case "date":
             return faker.date.recent();
-        case "object":
+        case "object": {
             const newData = {};
             const key = fakerData({ type: "string", name: "" });
             const value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
+        }
         case "array":
             return [];
         // return fakerData({ type: "string", name: "" }) + ", " + fakerData({ type: "string", name: "" });
@@ -236,12 +172,13 @@ function wrongFakerData(data) {
             return faker.datatype.boolean();
         case "boolean":
             return faker.datatype.number().toString();
-        case "date":
+        case "date": {
             const newData = {};
             const key = fakerData({ type: "string", name: "" });
             const value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
+        }
         case "object":
             return faker.date.recent();
         case "array":

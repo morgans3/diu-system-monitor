@@ -4,8 +4,12 @@ describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
     const tag = "AtomicPayloads";
     const testingEndpoint = "/atomic/payloads/{id}";
     // TODO: hardcoded payload id
-    const workingID = "Suicide_Prevention";
-    const failID = "vTMdCxvsDvo!%a6kTFzY4TGCxepzm%";
+    const passReplaceData = {
+        "{id}": "Suicide_Prevention",
+    };
+    const failReplaceData = {
+        "{id}": "vTMdCxvsDvo!%a6kTFzY4TGCxepzm%",
+    };
     let objSwaggerData = {};
     let userDetails = {};
     let userJWT = "";
@@ -20,11 +24,9 @@ describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
     it("get admin/ user JWT logging into system with AWS data", () => {
         cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
             adminJWT = "JWT " + jwtToken;
-            console.log(adminJWT);
         });
         cy.getJWT(userDetails.userData).then((jwtToken) => {
             userJWT = "JWT " + jwtToken;
-            console.log(userJWT);
         });
     });
 
@@ -42,20 +44,17 @@ describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
                     if (objSwaggerData.security.length > 0) {
                         JWT = userJWT;
                     }
-                    cy.getByID(objSwaggerData, JWT, workingID).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, null, passReplaceData).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([200, 304]);
                     });
                     break;
                 case "401":
-                    cy.getByID(objSwaggerData, JWT, workingID).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, null, passReplaceData).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([401]);
                     });
                     break;
                 case "404":
-                    cy.getByID(objSwaggerData, JWT, failID).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, null, failReplaceData).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([404, 400]);
                     });
                     break;

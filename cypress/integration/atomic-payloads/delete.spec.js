@@ -30,11 +30,9 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
     it("get admin/ user JWT logging into system with AWS data", () => {
         cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
             adminJWT = "JWT " + jwtToken;
-            console.log(adminJWT);
         });
         cy.getJWT(userDetails.userData).then((jwtToken) => {
             userJWT = "JWT " + jwtToken;
-            console.log(userJWT);
         });
     });
 
@@ -52,14 +50,12 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
                     if (objSwaggerData.security.length > 0) {
                         JWT = adminJWT;
                     }
-                    cy.delete(objSwaggerData, JWT, bodyParams).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, bodyParams).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([200, 304]);
                     });
                     break;
                 case "401":
-                    cy.delete(objSwaggerData, JWT, bodyParams).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, bodyParams).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([401]);
                     });
                     break;
@@ -67,8 +63,7 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
                     if (objSwaggerData.security.length > 0) {
                         JWT = userJWT;
                     }
-                    cy.delete(objSwaggerData, JWT, bodyParams).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, bodyParams).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([403, 400]);
                     });
                     break;
@@ -76,8 +71,7 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
                     if (objSwaggerData.security.length > 0) {
                         JWT = adminJWT;
                     }
-                    cy.delete(objSwaggerData, JWT, bodyParamsBadPayload).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, bodyParamsBadPayload).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([400]);
                     });
                     break;
@@ -85,8 +79,7 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
                     if (objSwaggerData.security.length > 0) {
                         JWT = adminJWT;
                     }
-                    cy.delete(objSwaggerData, JWT, bodyParamsFail).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, JWT, bodyParamsFail).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([404]);
                     });
                     break;

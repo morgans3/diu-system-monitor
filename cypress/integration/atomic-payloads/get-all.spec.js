@@ -30,8 +30,7 @@ describe("AtomicPayloads - '/atomic/payloads/'", () => {
             console.log(objSwaggerData.responses[responseStatus]);
             switch (responseStatus) {
                 case "200":
-                    cy.getAll(objSwaggerData, userJWT).then((testResponse) => {
-                        console.log(testResponse);
+                    cy.apiRequest(objSwaggerData, userJWT).then((testResponse) => {
                         cy.expect(testResponse.status).to.oneOf([200, 304]);
                     });
                     break;
