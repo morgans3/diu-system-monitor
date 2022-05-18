@@ -5,17 +5,17 @@ describe("AtomicPayloads - '/atomic/payloads/update'", () => {
     const testingEndpoint = "/atomic/payloads/update";
     let objSwaggerData = {};
     let userDetails = {};
-    let bodyParams = {
+    const bodyParams = {
         id: "max",
         type: "ullam",
         config: "etet",
     };
-    let bodyParamsFail = {
+    const bodyParamsFail = {
         id: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
         type: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
         config: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
     };
-    let bodyParamsBadPayload = {
+    const bodyParamsBadPayload = {
         type: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
         config: "g#paA%pzsVNDi6c4cPy$R3Vn!N4Jq6",
     };

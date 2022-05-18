@@ -3,7 +3,7 @@
 describe("AtomicPayloads - '/atomic/payloads/{id}'", () => {
     const tag = "AtomicPayloads";
     const testingEndpoint = "/atomic/payloads/{id}";
-    //TODO: hardcoded payload id
+    // TODO: hardcoded payload id
     const workingID = "Suicide_Prevention";
     const failID = "vTMdCxvsDvo!%a6kTFzY4TGCxepzm%";
     let objSwaggerData = {};

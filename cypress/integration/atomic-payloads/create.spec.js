@@ -47,7 +47,7 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     it("test against each status", () => {
         Object.keys(objSwaggerData.responses).forEach((responseStatus) => {
             let JWT = "";
-            //TODO: figure out hall monitor requests
+            // TODO: figure out hall monitor requests
             switch (responseStatus) {
                 case "200":
                     if (objSwaggerData.security.length > 0) {

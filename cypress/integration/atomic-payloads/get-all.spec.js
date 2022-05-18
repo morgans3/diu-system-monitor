@@ -6,7 +6,6 @@ describe("AtomicPayloads - '/atomic/payloads/'", () => {
     let objSwaggerData = {};
     let userDetails = {};
     let userJWT = "";
-    let adminJWT = "";
 
     it("Get admin/ user credentials from AWS", () => {
         cy.getAccounts().then((accountData) => {
@@ -15,9 +14,6 @@ describe("AtomicPayloads - '/atomic/payloads/'", () => {
     });
 
     it("get admin/ user JWT logging into system with AWS data", () => {
-        cy.getJWT(userDetails.adminUserData).then((jwtToken) => {
-            adminJWT = "JWT " + jwtToken;
-        });
         cy.getJWT(userDetails.userData).then((jwtToken) => {
             userJWT = "JWT " + jwtToken;
         });

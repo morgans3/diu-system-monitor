@@ -1,7 +1,7 @@
 const SecretsManager = require("aws-sdk/clients/secretsmanager");
 class Aws {
     static async getSecrets(secretName) {
-        let credentials = Cypress.env();
+        const credentials = Cypress.env();
         const clientparams = { region: credentials.AWSREGION || "eu-west-2" };
         if (credentials.aws_access_key_id && credentials.aws_secret_access_key) {
             clientparams["accessKeyId"] = credentials.aws_access_key_id;
