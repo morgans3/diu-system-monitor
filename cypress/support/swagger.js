@@ -57,13 +57,13 @@ Cypress.Commands.add("getSwaggerData", (tag, testingEndpoint) => {
     cy.request(settings.baseURL + "/swagggerjson").then((swagggerResponse) => {
         cy.expect(swagggerResponse.status).to.oneOf([200, 304]);
         if (swagggerResponse.body && swagggerResponse.body.paths) {
-            let swagggerResponseData = swagggerResponse.body.paths;
+            const swagggerResponseData = swagggerResponse.body.paths;
             Object.keys(swagggerResponseData).forEach((endpoint) => {
                 Object.keys(swagggerResponseData[endpoint]).forEach((requestType) => {
-                    let APIInformation = swagggerResponseData[endpoint][requestType];
+                    const APIInformation = swagggerResponseData[endpoint][requestType];
                     APIInformation["endpoint"] = endpoint;
                     APIInformation["requestType"] = requestType;
-                    if (APIInformation.tags.includes(tag) && endpoint == testingEndpoint) {
+                    if (APIInformation.tags.includes(tag) && endpoint === testingEndpoint) {
                         swaggerData = APIInformation;
                     }
                 });
@@ -107,26 +107,22 @@ Cypress.Commands.add("getByID", (endpointData, JWT, id) => {
 });
 
 Cypress.Commands.add("createFixture", (endpointData) => {
-    console.log(endpointData);
-    let bodyParams = {};
+    const bodyParams = {};
     if (endpointData.parameters && endpointData.parameters.length) {
         endpointData.parameters.forEach((data) => {
             bodyParams[data.name] = fakerData(data);
         });
     }
-    console.log(bodyParams);
     return bodyParams;
 });
 
 Cypress.Commands.add("createFailFixture", (endpointData) => {
-    console.log(endpointData);
-    let bodyParams = {};
+    const bodyParams = {};
     if (endpointData.parameters && endpointData.parameters.length) {
         endpointData.parameters.forEach((data) => {
             bodyParams[data.name] = wrongFakerData(data);
         });
     }
-    console.log(bodyParams);
     return bodyParams;
 });
 
@@ -148,9 +144,7 @@ Cypress.Commands.add("create", (endpointData, JWT, bodyParams) => {
     if (bodyParams) {
         requestConfig.body = bodyParams;
     }
-    console.log(requestConfig);
     cy.request(requestConfig).then((response) => {
-        console.log(response);
         return response;
     });
 });
@@ -169,9 +163,7 @@ Cypress.Commands.add("update", (endpointData, JWT, bodyParams) => {
     if (bodyParams) {
         requestConfig.body = bodyParams;
     }
-    console.log(requestConfig);
     cy.request(requestConfig).then((response) => {
-        console.log(response);
         return response;
     });
 });
@@ -190,9 +182,7 @@ Cypress.Commands.add("delete", (endpointData, JWT, bodyParams) => {
     if (bodyParams) {
         requestConfig.body = bodyParams;
     }
-    console.log(requestConfig);
     cy.request(requestConfig).then((response) => {
-        console.log(response);
         return response;
     });
 });
@@ -207,9 +197,9 @@ function fakerData(data) {
         case "date":
             return faker.date.recent();
         case "object":
-            let newData = {};
-            let key = fakerData({ type: "string", name: "" });
-            let value = fakerData({ type: "string", name: "" });
+            var newData = {};
+            var key = fakerData({ type: "string", name: "" });
+            var value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
         case "array":
@@ -247,9 +237,9 @@ function wrongFakerData(data) {
         case "boolean":
             return faker.datatype.number().toString();
         case "date":
-            let newData = {};
-            let key = fakerData({ type: "string", name: "" });
-            let value = fakerData({ type: "string", name: "" });
+            var newData = {};
+            var key = fakerData({ type: "string", name: "" });
+            var value = fakerData({ type: "string", name: "" });
             newData['"' + key + '"'] = value;
             return newData;
         case "object":
