@@ -1,17 +1,13 @@
 /// <reference types="cypress" />
+
+const ApiBaseClass = require("../../classes/api-base-class");
+
 describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     const tag = "AtomicPayloads";
     const testingEndpoint = "/atomic/payloads/create";
+    let AtomicPayloadData;
     let objSwaggerData = {};
     let userDetails = {};
-    const replaceData = {
-        passReplaceData: {},
-        failReplaceData: {},
-    };
-    const bodyParams = {
-        bodyParams: {},
-        bodyParamsFail: {},
-    };
     const JWTs = {
         userJWT: "",
         adminJWT: "",
@@ -19,6 +15,7 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
 
     it("Get admin/ user credentials from AWS", () => {
         cy.getAccounts().then((accountData) => {
+            console.log(accountData);
             userDetails = accountData;
         });
     });
@@ -33,25 +30,25 @@ describe("AtomicPayloads - '/atomic/payloads/create'", () => {
     });
 
     it("get endpoint information from swagggerjson", () => {
-        cy.getSwaggerDataOld(tag, testingEndpoint).then((swaggerData) => {
+        cy.getSwaggerData(tag).then((swaggerData) => {
             objSwaggerData = swaggerData;
         });
     });
 
-    it("prepare fixture data", () => {
-        console.log(objSwaggerData);
-        cy.createFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParams = data;
-        });
-    });
-
-    it("prepare fail fixture data", () => {
-        cy.createFailFixture(objSwaggerData).then((data) => {
-            bodyParams.bodyParamsFail = data;
-        });
-    });
-
     it("test against each status", () => {
-        cy.testEndpointResponses(objSwaggerData, JWTs, bodyParams, replaceData);
+        AtomicPayloadData = new ApiBaseClass(objSwaggerData);
+        if (AtomicPayloadData.orderedEndpointData && AtomicPayloadData.orderedEndpointData.length > 0) {
+            AtomicPayloadData.orderedEndpointData.forEach((endpointData) => {
+                let replaceData = {};
+                // TODO: replace hardcoded replaceData
+                if (endpointData.endpoint.includes("{id}")) {
+                    replaceData = AtomicPayloadData.replaceData;
+                }
+                console.log(endpointData);
+                console.log(JWTs);
+                console.log(AtomicPayloadData);
+                cy.testEndpointResponses(endpointData, JWTs, AtomicPayloadData.bodyParams, replaceData);
+            });
+        }
     });
 });

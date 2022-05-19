@@ -45,7 +45,7 @@ describe("AtomicPayloads - '/atomic/payloads/delete'", () => {
     });
 
     it("get endpoint information from swagggerjson", () => {
-        cy.getSwaggerData(tag, testingEndpoint).then((swaggerData) => {
+        cy.getSwaggerDataOld(tag, testingEndpoint).then((swaggerData) => {
             objSwaggerData = swaggerData;
         });
     });
