@@ -33,7 +33,7 @@ Cypress.Commands.add("createFailFixture", (endpointData) => {
     return bodyParams;
 });
 
-Cypress.Commands.add("getRandomString", (endpointData) => {
+Cypress.Commands.add("getRandomString", () => {
     return fakerData({ type: "sting", name: "string" });
 });
 
