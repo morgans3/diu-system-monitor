@@ -2,9 +2,8 @@
 
 const ApiBaseClass = require("../../classes/api-base-class");
 
-describe("AtomicPayloads - '/atomic/payloads/create'", () => {
+describe("AtomicPayloads - All endpoints", () => {
     const tag = "AtomicPayloads";
-    const testingEndpoint = "/atomic/payloads/create";
     let AtomicPayloadData;
     let objSwaggerData = {};
     let userDetails = {};
