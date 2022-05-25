@@ -93,6 +93,14 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     });
 });
 
+function whatToExpect(statuscode) {
+    switch (statuscode) {
+        case "200":
+            return [200, 304];
+        default:
+            return [parseInt(statuscode)];
+    }
+}
 Cypress.Commands.add("testEndpointResponses", (objSwaggerData, JWTs, bodyParams, replaceData) => {
     Object.keys(objSwaggerData.responses).forEach((responseStatus) => {
         let JWT = "";
@@ -103,42 +111,170 @@ Cypress.Commands.add("testEndpointResponses", (objSwaggerData, JWTs, bodyParams,
                 if (objSwaggerData.security.length > 0) {
                     JWT = JWTs.adminJWT;
                 }
-                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
-                    cy.expect(testResponse.status).to.oneOf([200, 304]);
-                });
+                cy.log(objSwaggerData);
+                cy.log(JWT);
+                cy.log(bodyParams);
+                cy.log(replaceData);
+                console.log(objSwaggerData);
+                console.log(JWT);
+                console.log(bodyParams);
+                console.log(replaceData);
+                // cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                //     cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+                // });
                 // }
                 break;
             case "401":
-                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
-                    cy.expect(testResponse.status).to.oneOf([401]);
-                });
+                cy.log(objSwaggerData);
+                cy.log(JWT);
+                cy.log(bodyParams);
+                cy.log(replaceData);
+                console.log(objSwaggerData);
+                console.log(JWT);
+                console.log(bodyParams);
+                console.log(replaceData);
+                // cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                //     cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+                // });
                 break;
             case "403":
                 if (objSwaggerData.security.length > 0) {
                     JWT = JWTs.userJWT;
                 }
-                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
-                    cy.expect(testResponse.status).to.oneOf([403, 400]);
-                });
+                cy.log(objSwaggerData);
+                cy.log(JWT);
+                cy.log(bodyParams);
+                cy.log(replaceData);
+                console.log(objSwaggerData);
+                console.log(JWT);
+                console.log(bodyParams);
+                console.log(replaceData);
+                // cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                //     cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+                // });
                 break;
             case "400":
                 if (objSwaggerData.security.length > 0) {
                     JWT = JWTs.adminJWT;
                 }
-                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
-                    // TODO: remove 404 from 400
-                    cy.expect(testResponse.status).to.oneOf([400, 404]);
-                });
+                cy.log(objSwaggerData);
+                cy.log(JWT);
+                cy.log(bodyParams);
+                cy.log(replaceData);
+                console.log(objSwaggerData);
+                console.log(JWT);
+                console.log(bodyParams);
+                console.log(replaceData);
+                // cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
+                //     // TODO: remove 404 from 400
+                //     cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+                // });
                 break;
             case "404":
                 if (objSwaggerData.security.length > 0) {
                     JWT = JWTs.adminJWT;
                 }
-                cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsFail, replaceData.failReplaceData).then((testResponse) => {
-                    // TODO: remove 400 from 404
-                    cy.expect(testResponse.status).to.oneOf([404, 400]);
-                });
+                cy.log(objSwaggerData);
+                cy.log(JWT);
+                cy.log(bodyParams);
+                cy.log(replaceData);
+                console.log(objSwaggerData);
+                console.log(JWT);
+                console.log(bodyParams);
+                console.log(replaceData);
+                // cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsFail, replaceData.failReplaceData).then((testResponse) => {
+                //     // TODO: remove 400 from 404
+                //     cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+                // });
                 break;
         }
     });
+});
+
+Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JWTs, bodyParams, replaceData) => {
+    let JWT = "";
+    switch (responseStatus) {
+        case "200":
+            // TODO: remove this delete functionality when you have a real delete endpoint
+            // if (!objSwaggerData.endpoint.includes("/delete")) {
+            if (objSwaggerData.security.length > 0) {
+                JWT = JWTs.adminJWT;
+            }
+            // cy.log(objSwaggerData);
+            // cy.log(JWT);
+            // cy.log(bodyParams);
+            // cy.log(replaceData);
+            // console.log(objSwaggerData);
+            // console.log(JWT);
+            // console.log(bodyParams);
+            // console.log(replaceData);
+            cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+            });
+            // }
+            break;
+        case "401":
+            // cy.log(objSwaggerData);
+            // cy.log(JWT);
+            // cy.log(bodyParams);
+            // cy.log(replaceData);
+            // console.log(objSwaggerData);
+            // console.log(JWT);
+            // console.log(bodyParams);
+            // console.log(replaceData);
+            cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+            });
+            break;
+        case "403":
+            if (objSwaggerData.security.length > 0) {
+                JWT = JWTs.userJWT;
+            }
+            // cy.log(objSwaggerData);
+            // cy.log(JWT);
+            // cy.log(bodyParams);
+            // cy.log(replaceData);
+            // console.log(objSwaggerData);
+            // console.log(JWT);
+            // console.log(bodyParams);
+            // console.log(replaceData);
+            cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
+                cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+            });
+            break;
+        case "400":
+            if (objSwaggerData.security.length > 0) {
+                JWT = JWTs.adminJWT;
+            }
+            // cy.log(objSwaggerData);
+            // cy.log(JWT);
+            // cy.log(bodyParams);
+            // cy.log(replaceData);
+            // console.log(objSwaggerData);
+            // console.log(JWT);
+            // console.log(bodyParams);
+            // console.log(replaceData);
+            cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
+                // TODO: remove 404 from 400
+                cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+            });
+            break;
+        case "404":
+            if (objSwaggerData.security.length > 0) {
+                JWT = JWTs.adminJWT;
+            }
+            // cy.log(objSwaggerData);
+            // cy.log(JWT);
+            // cy.log(bodyParams);
+            // cy.log(replaceData);
+            // console.log(objSwaggerData);
+            // console.log(JWT);
+            // console.log(bodyParams);
+            // console.log(replaceData);
+            cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsFail, replaceData.failReplaceData).then((testResponse) => {
+                // TODO: remove 400 from 404
+                cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
+            });
+            break;
+    }
 });
