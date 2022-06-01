@@ -1,7 +1,12 @@
 /// <reference types="cypress" />
-
 const tagData = require("../../fixtures/allTags.json");
+// before(() => {
+//     cy.exec("npm run prepare-swagger-data");
+// });
 
+// after(() => {
+//     cy.exec("npm run delete-swagger-data");
+// });
 context("Prepare Data and test all endpoints", () => {
     let userDetails = {};
     const JWTs = {
@@ -22,42 +27,71 @@ context("Prepare Data and test all endpoints", () => {
         });
     });
     tagData.forEach((tag) => {
-        // if (tag == "AtomicPayloads") {
-        describe("testing each endpoint located at" + tag, () => {
-            let tagName = tag.replace(" ", "-").toLowerCase();
-            let orderedData = require("../../fixtures/ordered-" + tagName + ".json");
-            let fixtureData = require("../../fixtures/" + tagName + ".json");
-            let wrongFixtureData = require("../../fixtures/wrong-" + tagName + ".json");
-            if (orderedData && orderedData.length > 0) {
-                orderedData.forEach((endpointData) => {
-                    context(endpointData.endpoint, () => {
-                        Object.keys(endpointData.responses).forEach((responseStatus) => {
-                            it("should pass for status: " + responseStatus, () => {
-                                // console.log(endpointData);
-                                // console.log(userDetails);
-                                let passParams = prepareFixtureData(fixtureData, endpointData.parameters);
-                                let failParams = prepareFixtureData(wrongFixtureData, endpointData.parameters);
-                                let badPayload = prepareBadFixtureData(fixtureData, endpointData.parameters);
-                                const bodyParams = {
-                                    bodyParams: passParams,
-                                    bodyParamsFail: failParams,
-                                    bodyParamsBadPayload: badPayload,
-                                };
-                                const rxp = /{([^}]+)}/g;
-                                let curMatch;
-                                let foundReplacements = [];
-                                while ((curMatch = rxp.exec(endpointData.endpoint))) {
-                                    foundReplacements.push(curMatch[1]);
+        if (tag != "PostCodes" && tag == "Teams") {
+            describe("testing each endpoint located at" + tag, () => {
+                let tagName = tag.replace(" ", "-").toLowerCase();
+                let orderedData = require("../../fixtures/ordered-" + tagName + ".json");
+                let fixtureData = require("../../fixtures/" + tagName + ".json");
+                let wrongFixtureData = require("../../fixtures/wrong-" + tagName + ".json");
+                if (orderedData && orderedData.length > 0) {
+                    orderedData.forEach((endpointData) => {
+                        let passParams = prepareFixtureData(fixtureData, endpointData.parameters);
+                        let failParams = prepareFixtureData(wrongFixtureData, endpointData.parameters);
+                        let badPayload = prepareBadFixtureData(fixtureData, endpointData.parameters);
+                        const bodyParams = {
+                            bodyParams: passParams,
+                            bodyParamsFail: failParams,
+                            bodyParamsBadPayload: badPayload,
+                        };
+                        context(endpointData.endpoint, () => {
+                            let arrResponses = [];
+                            Object.keys(endpointData.responses).forEach((responseStatus) => {
+                                if (responseStatus != "200") {
+                                    arrResponses.push(responseStatus);
                                 }
-                                let replaceData = prepareReplacementData(foundReplacements, passParams);
-                                cy.testEndpointResponse(responseStatus, endpointData, JWTs, bodyParams, replaceData);
+                            });
+                            Object.keys(endpointData.responses).forEach((responseStatus) => {
+                                if (responseStatus == "200") {
+                                    arrResponses.push(responseStatus);
+                                }
+                            });
+                            arrResponses.forEach((responseStatus) => {
+                                it("should pass for status: " + responseStatus, () => {
+                                    const rxp = /{([^}]+)}/g;
+                                    let curMatch;
+                                    let foundReplacements = [];
+                                    while ((curMatch = rxp.exec(endpointData.endpoint))) {
+                                        foundReplacements.push(curMatch[1]);
+                                    }
+                                    let replaceData = prepareReplacementData(foundReplacements, fixtureData);
+                                    cy.log(bodyParams);
+                                    cy.testEndpointResponse(responseStatus, endpointData, JWTs, bodyParams, replaceData).then(
+                                        (response) => {
+                                            console.log(response);
+                                            cy.log(response);
+                                            if (
+                                                responseStatus == 200 &&
+                                                response.status == 200 &&
+                                                endpointData.endpoint.indexOf("/create") !== -1 &&
+                                                response.body.data
+                                            ) {
+                                                bodyParams.bodyParams = response.body.data;
+                                                if (bodyParams.bodyParams._id) {
+                                                    bodyParams.bodyParams.id = bodyParams.bodyParams._id;
+                                                    delete bodyParams.bodyParams._id;
+                                                }
+                                                console.log(bodyParams);
+                                                cy.log(bodyParams);
+                                            }
+                                        }
+                                    );
+                                });
                             });
                         });
                     });
-                });
-            }
-        });
-        // }
+                }
+            });
+        }
     });
 });
 
@@ -65,7 +99,7 @@ function prepareFixtureData(fixtureData, parameters) {
     let newFixture = {};
     if (parameters && parameters.length > 0) {
         parameters.forEach((parameter) => {
-            if (fixtureData[parameter.name]) {
+            if (fixtureData[parameter.name] !== undefined) {
                 newFixture[parameter.name] = fixtureData[parameter.name];
             }
         });
@@ -74,13 +108,7 @@ function prepareFixtureData(fixtureData, parameters) {
 }
 
 function prepareBadFixtureData(parameters) {
-    let newFixture = {};
-    if (parameters && parameters.length > 0) {
-        parameters.forEach((parameter) => {
-            newFixture[parameter.name] = "papLEP5VyjVCo4";
-        });
-    }
-    return newFixture;
+    return {};
 }
 
 function prepareReplacementData(foundReplacements, params) {
