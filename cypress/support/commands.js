@@ -16,6 +16,7 @@ Cypress.Commands.add("niLogin", (user, loginpage) => {
 Cypress.Commands.add("createFixture", (endpointData) => {
     const bodyParams = {};
     if (endpointData.parameters && endpointData.parameters.length) {
+        console.log(endpointData.parameters);
         endpointData.parameters.forEach((data) => {
             bodyParams[data.name] = fakerData(data);
         });
@@ -33,7 +34,7 @@ Cypress.Commands.add("createFailFixture", (endpointData) => {
     return bodyParams;
 });
 
-Cypress.Commands.add("getRandomString", (endpointData) => {
+Cypress.Commands.add("getRandomString", () => {
     return fakerData({ type: "sting", name: "string" });
 });
 
@@ -61,8 +62,12 @@ function fakerData(data) {
             switch (data.name.toLowerCase()) {
                 case "phone":
                 case "phonenumber":
+                case "phone_number":
+                case "tel":
                     return faker.phone.phoneNumber();
                 case "email":
+                case "emailaddress":
+                case "email_address":
                     return faker.internet.email();
                 case "firstname":
                     return faker.name.firstName();

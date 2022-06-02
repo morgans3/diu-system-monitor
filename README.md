@@ -2,6 +2,14 @@
 
 This codebase is an implementation of Sorry Cypress server for storing results of Automated Tests, and files on Canary-style testing for repeating the automated tests on production environments as a system health monitoring
 
+## Pre-requisites
+
+- An AWS Account, with an IAM with required permissions to use the AWS SDK
+- Locally stored AWS Credentials which grant programmatic access, created in AWS IAM
+- AWS Secrets Manager to include the following secrets: jwt, awsdev (for notes on these please review the deployment code documentation)
+- Typescript v2.7 or later installed
+- Node.js v10.13.0 or later installed
+
 ## System Tests (Cypress)
 
 ### Rationale and Objectives
@@ -42,7 +50,7 @@ This folder is the core files that cypress uses for testing. Any spec.ts files y
 
 ### Instructions for running locally
 
-- use `npm run test-local` to run the cypress testing locally
+- use `npm run test-local` to run the cypress testing locally. This will load all of the configuration files and create the required fixtures.
 
 ## Backend (Sorry-Cypress)
 
