@@ -6,6 +6,7 @@ class ApiBaseClass {
         bodyParamsFail: {},
         bodyParamsBadPayload: {},
     };
+
     foundReplacements = [];
     // TODO: replace hardcoded replaceData
     replaceData = {
@@ -69,7 +70,7 @@ class ApiBaseClass {
                 });
             }
         });
-        let badPayloadTest = Object.keys(this.bodyParams.bodyParamsBadPayload);
+        const badPayloadTest = Object.keys(this.bodyParams.bodyParamsBadPayload);
         if (badPayloadTest.length > 0) {
             const key = badPayloadTest[0];
             delete this.bodyParams.bodyParamsBadPayload[key];
@@ -87,8 +88,8 @@ class ApiBaseClass {
                 return faker.date.recent();
             case "object": {
                 const newData = {};
-                const key = fakerData({ type: "string", name: "" });
-                const value = fakerData({ type: "string", name: "" });
+                const key = this.fakerData({ type: "string", name: "" });
+                const value = this.fakerData({ type: "string", name: "" });
                 newData['"' + key + '"'] = value;
                 return newData;
             }
@@ -132,8 +133,8 @@ class ApiBaseClass {
                 return faker.datatype.number().toString();
             case "date": {
                 const newData = {};
-                const key = fakerData({ type: "string", name: "" });
-                const value = fakerData({ type: "string", name: "" });
+                const key = this.fakerData({ type: "string", name: "" });
+                const value = this.fakerData({ type: "string", name: "" });
                 newData['"' + key + '"'] = value;
                 return newData;
             }

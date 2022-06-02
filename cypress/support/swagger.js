@@ -26,20 +26,17 @@ Cypress.Commands.add("getJWT", (userData) => {
     });
 });
 
-Cypress.Commands.add("getSwaggerData", (tag) => {
-    let swaggerData = [];
-    cy.request(settings.baseURL + "/swagggerjson").then((swagggerResponse) => {
-        cy.expect(swagggerResponse.status).to.oneOf([200, 304]);
-        if (swagggerResponse.body && swagggerResponse.body.paths) {
-            const swagggerResponseData = swagggerResponse.body.paths;
+Cypress.Commands.add("getSwaggerData", () => {
+    const swaggerData = [];
+    cy.fixture("swagggerjson").then((swagggerResponse) => {
+        if (swagggerResponse && swagggerResponse.paths) {
+            const swagggerResponseData = swagggerResponse.paths;
             Object.keys(swagggerResponseData).forEach((endpoint) => {
                 Object.keys(swagggerResponseData[endpoint]).forEach((requestType) => {
                     const APIInformation = swagggerResponseData[endpoint][requestType];
                     APIInformation["endpoint"] = endpoint;
                     APIInformation["requestType"] = requestType;
-                    if (APIInformation.tags.includes(tag)) {
-                        swaggerData.push(APIInformation);
-                    }
+                    swaggerData.push(APIInformation);
                 });
             });
         }
@@ -81,17 +78,6 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     }
     if (bodyParams) {
         requestConfig.body = bodyParams;
-        if (requestConfig.method == "get") {
-            let queryString = new URLSearchParams(bodyParams).toString();
-            if (
-                endpointData.endpoint == "/access-logs/statistics" ||
-                endpointData.endpoint == "/searchs/teams" ||
-                endpointData.endpoint == "/searchusers/profiles" ||
-                endpointData.endpoint == "/searchusers/org-profiles"
-            ) {
-                requestConfig.url = requestConfig.url + "?" + queryString;
-            }
-        }
     }
     if (replaceData) {
         Object.keys(replaceData).forEach((find) => {
@@ -205,7 +191,7 @@ Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JW
 
 function create404FromParameters(bodyParams) {
     Object.keys(bodyParams).forEach((parameter) => {
-        if (parameter != "teamcode" && parameter != "code") {
+        if (parameter !== "teamcode" && parameter !== "code") {
             bodyParams[parameter] += "1";
         }
     });
