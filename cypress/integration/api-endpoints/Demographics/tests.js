@@ -6,6 +6,11 @@ const JWTs = {
     userJWT: "",
     adminJWT: "",
 };
+let patient;
+const testPatientNHSNumber = "0123456789";
+
+// TODO: Test all once the endpoint capabilities have been corrected
+// https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api/issues/63
 
 before(() => {
     // Act
@@ -50,7 +55,7 @@ describe("Test Setup", () => {
     });
 });
 
-describe("Test Endpoint", () => {
+describe("Test Endpoints", () => {
     it("Check if endpoints to test", () => {
         endpoints = controller.orderedEndpointData.filter((x) => {
             return x.tags.includes("Demographics");
@@ -73,8 +78,6 @@ describe("Test Endpoint", () => {
         });
     });
 
-    // TODO: Test endpoint for 400 status
-
     it("Check endpoint for 403 status", () => {
         endpoints.forEach((endpoint) => {
             if (endpoint.responses["403"]) {
@@ -84,8 +87,154 @@ describe("Test Endpoint", () => {
             }
         });
     });
+});
 
-    // TODO: Test endpoint for 404 status
+describe("Test demographicsbynhsnumber", () => {
+    let thisendpoint;
 
-    // TODO: Test endpoint for 200 status
+    it("demographicsbynhsnumber is available", () => {
+        thisendpoint = controller.orderedEndpointData.find((x) => {
+            return x.endpoint.includes("demographicsbynhsnumber");
+        });
+        cy.expect(thisendpoint).to.be.a("object");
+    });
+
+    it("demographicsbynhsnumber returns 404 status", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint + "?NHSNumber=01234",
+            requestType: thisendpoint.requestType,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(404);
+        });
+    });
+
+    it("demographicsbynhsnumber returns 400 status", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(400);
+        });
+    });
+
+    it("demographicsbynhsnumber returns 200 status", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint + "?NHSNumber=" + testPatientNHSNumber,
+            requestType: thisendpoint.requestType,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            patient = response.body;
+            patient["NHSNumber"] = testPatientNHSNumber;
+            cy.log(patient);
+        });
+    });
+});
+
+describe("Test validateNHSNumber", () => {
+    let thisendpoint;
+
+    it("validateNHSNumber is available", () => {
+        thisendpoint = controller.orderedEndpointData.find((x) => {
+            return x.endpoint.includes("validateNHSNumber");
+        });
+        cy.expect(thisendpoint).to.be.a("object");
+    });
+
+    it("validateNHSNumber returns 200 status - Patient not found", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        const body = {
+            NHSNumber: "9876543210",
+            DateOfBirth: patient.dob,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, body).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.body.success).to.be.equal(false);
+        });
+    });
+
+    it("validateNHSNumber returns 400 status", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, patient).then((response) => {
+            cy.expect(response.status).to.be.equal(400);
+        });
+    });
+
+    it("validateNHSNumber returns 200 status - Patient found", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        const body = {
+            NHSNumber: patient.NHSNumber,
+            DateOfBirth: patient.DOB,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, body).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.body.success).to.be.equal(true);
+        });
+    });
+});
+
+describe("Test findMyNHSNumber", () => {
+    let thisendpoint;
+
+    it("findMyNHSNumber is available", () => {
+        thisendpoint = controller.orderedEndpointData.find((x) => {
+            return x.endpoint.includes("findMyNHSNumber");
+        });
+        cy.expect(thisendpoint).to.be.a("object");
+    });
+
+    it("findMyNHSNumber returns 200 status - Patient not found", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        const body = {
+            gender: "U",
+            dob: patient.DOB,
+            postcode: "NOT APC",
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, body).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.body.success).to.be.equal(true);
+            cy.expect(response.body.nhsnumber).to.be.equal(null);
+        });
+    });
+
+    it("findMyNHSNumber returns 400 status", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, patient).then((response) => {
+            cy.expect(response.status).to.be.equal(400);
+        });
+    });
+
+    it("findMyNHSNumber returns 200 status - Patient found", () => {
+        const simEndpoint = {
+            endpoint: thisendpoint.endpoint,
+            requestType: thisendpoint.requestType,
+        };
+        const body = {
+            gender: patient.Gender,
+            dob: patient.DOB,
+            postcode: patient.PostCode,
+        };
+        cy.apiRequest(simEndpoint, JWTs.adminJWT, body).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.body.success).to.be.equal(true);
+            cy.expect(response.body.nhsnumber).to.be.equal(testPatientNHSNumber);
+        });
+    });
 });

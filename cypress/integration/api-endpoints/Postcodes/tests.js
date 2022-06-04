@@ -68,7 +68,8 @@ describe("Test Endpoint", () => {
             endpoints.forEach((endpoint) => {
                 console.log(endpoint);
                 if (endpoint.endpoint !== "/postcodes/") {
-                    // TODO: Remove this once the API responds quicker than 30 seconds
+                    // TODO: Remove the exclusion if statement once the API responds quicker than 30 seconds
+                    // (https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api/issues/63)
                     cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
                         cy.expect(response.status).to.be.equal(200);
                     });
