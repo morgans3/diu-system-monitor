@@ -92,7 +92,6 @@ describe("Test POST Method", () => {
             return x.requestType === "post";
         });
         cy.expect(postEndpoint).to.be.a("object");
-        cy.log(postEndpoint);
     });
 
     it("Test for Bad Request (400)", () => {
