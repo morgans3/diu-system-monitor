@@ -127,42 +127,50 @@ describe("Test POST Method", () => {
     });
 });
 
-// describe("Test GET Methods", () => {
-//     let getEndpoint;
-//     it("Check method exists", () => {
-//         getEndpoint = endpoints.find((x) => {
-//             return x.requestType === "get";
-//         });
-//         cy.expect(getEndpoint).to.be.a("object");
-//     });
+describe("Test GET Methods", () => {
+    let getEndpoint;
+    it("Check method exists", () => {
+        getEndpoint = endpoints.find((x) => {
+            return x.requestType === "get";
+        });
+        cy.expect(getEndpoint).to.be.a("object");
+    });
 
-//     it("Check get all", () => {
-//         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-//             cy.expect(response.status).to.be.equal(200);
-//         });
-//     });
+    it("Check get all", () => {
+        cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
 
-//     it("Check get by params - Name", () => {
-//         getEndpoint.endpoint = getEndpoint.endpoint + "?name=" + userCohort.cohortName;
-//         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-//             cy.expect(response.status).to.be.equal(200);
-//         });
-//     });
+    it("Check get by params - ID", () => {
+        getEndpoint.endpoint = "/teammembers/" + member["_id"];
+        cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
 
-//     it("Check get by params - Username", () => {
-//         getEndpoint.endpoint = getEndpoint.endpoint + "?username=" + userCohort.user;
-//         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-//             cy.expect(response.status).to.be.equal(200);
-//         });
-//     });
+    it("Check get by params - Username", () => {
+        const newendpoint = "/teammembers/username/" + JWTs.username;
+        const type = {
+            requestType: "get",
+            endpoint: newendpoint,
+        };
+        cy.apiRequest(type, JWTs.userJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
 
-//     it("Check get by params - Teamcode", () => {
-//         getEndpoint.endpoint = getEndpoint.endpoint + "?teamcode=" + teamCohort.teamcode;
-//         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-//             cy.expect(response.status).to.be.equal(200);
-//         });
-//     });
-// });
+    it("Check get by params - Teamcode", () => {
+        const newendpoint = "/teammembers/teamcode/" + shellTeam.code;
+        const type = {
+            requestType: "get",
+            endpoint: newendpoint,
+        };
+        cy.apiRequest(type, JWTs.userJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+});
 
 describe("Test PUT Method", () => {
     let putEndpoint;
