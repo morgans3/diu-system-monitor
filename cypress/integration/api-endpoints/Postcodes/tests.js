@@ -66,10 +66,9 @@ describe("Test Endpoint", () => {
         },
         () => {
             endpoints.forEach((endpoint) => {
-                console.log(endpoint);
                 if (endpoint.endpoint !== "/postcodes/") {
-                    // TODO: Remove the exclusion if statement once the API responds quicker than 30 seconds
-                    // (https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api/issues/63)
+                    // The exclusion is due to Chrome struggling with the FeatureCollection. Works in App and PGAdmin.
+                    // see https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api/issues/63 for notes
                     cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
                         cy.expect(response.status).to.be.equal(200);
                     });
