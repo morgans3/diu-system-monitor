@@ -9,9 +9,6 @@ const JWTs = {
 let patient;
 const testPatientNHSNumber = "0123456789";
 
-// TODO: Test all once the endpoint capabilities have been corrected
-// https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api/issues/63
-
 before(() => {
     // Act
     cy.getSwaggerData().then((swaggerData) => {
