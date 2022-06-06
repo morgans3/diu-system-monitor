@@ -22,6 +22,8 @@ class ApiBaseClass {
 
     organiseEndpoints = {};
 
+    getAllTags = {};
+
     constructor(swagggerData) {
         this.reorderFixtureData(swagggerData);
         this.getReplacementData(swagggerData);
@@ -42,9 +44,28 @@ class ApiBaseClass {
             }
         });
         swagggerData.forEach((endpointData) => {
+            const arrEndpointData = endpointData.endpoint.split("/");
             if (!this.organiseEndpoints[endpointData.endpoint]) {
-                this.orderedEndpointData.push(endpointData);
-                this.organiseEndpoints[endpointData.endpoint] = true;
+                if (!endpointData.endpoint.includes("/delete")) {
+                    if (arrEndpointData[arrEndpointData.length - 1] !== "delete") {
+                        if (this.isGetAll(arrEndpointData)) {
+                            this.getAllTags[endpointData.tags[0]] = endpointData;
+                        }
+                        this.orderedEndpointData.push(endpointData);
+                        this.organiseEndpoints[endpointData.endpoint] = true;
+                    }
+                }
+            }
+        });
+        swagggerData.forEach((endpointData) => {
+            const arrEndpointData = endpointData.endpoint.split("/");
+            if (!this.organiseEndpoints[endpointData.endpoint]) {
+                if (endpointData.endpoint.includes("/delete")) {
+                    if (arrEndpointData[arrEndpointData.length - 1] === "delete") {
+                        this.orderedEndpointData.push(endpointData);
+                        this.organiseEndpoints[endpointData.endpoint] = true;
+                    }
+                }
             }
         });
     }
@@ -146,6 +167,32 @@ class ApiBaseClass {
             default:
                 return faker.datatype.boolean();
         }
+    }
+
+    isGetAll(arrEndpointData) {
+        if (arrEndpointData.length == 2 && arrEndpointData[0] === "") {
+            return true;
+        }
+        if (arrEndpointData.length == 3 && arrEndpointData[0] === "" && arrEndpointData[2] === "") {
+            return true;
+        }
+        if (
+            arrEndpointData.length == 3 &&
+            arrEndpointData[0] === "" &&
+            arrEndpointData[1] === "atomic" &&
+            arrEndpointData[2] === "payloads"
+        ) {
+            return true;
+        }
+        if (
+            arrEndpointData.length == 3 &&
+            arrEndpointData[0] === "" &&
+            arrEndpointData[1] === "atomic" &&
+            arrEndpointData[2] === "formdata"
+        ) {
+            return true;
+        }
+        return false;
     }
 }
 

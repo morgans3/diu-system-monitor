@@ -90,6 +90,55 @@ Cypress.Commands.add("apiRequest", (endpointData, JWT, bodyParams, replaceData) 
     });
 });
 
+Cypress.Commands.add("apiGetByParamsRequest", (endpointData, JWT, getAllEndpoint) => {
+    const requestConfig = {
+        method: endpointData.requestType,
+        url: settings.baseURL + endpointData.endpoint,
+        failOnStatusCode: false,
+    };
+    const getAllRequestConfig = {
+        method: getAllEndpoint.requestType,
+        url: settings.baseURL + getAllEndpoint.endpoint,
+        failOnStatusCode: false,
+    };
+    if (JWT) {
+        requestConfig.headers = {
+            Authorization: JWT,
+        };
+        getAllRequestConfig.headers = {
+            Authorization: JWT,
+        };
+    }
+    cy.request(getAllRequestConfig).then((getAllResponse) => {
+        expect(getAllResponse.status).to.oneOf(whatToExpect(200));
+        let responseBody = getAllResponse.body;
+        if (typeof getAllResponse.body === "string") {
+            responseBody = JSON.parse(getAllResponse.body);
+        }
+        requestConfig.url = getReplacementUrl(responseBody, requestConfig.url);
+        cy.request(requestConfig).then((response) => {
+            console.log(response);
+        });
+    });
+});
+
+Cypress.Commands.add("apiGetByParamsBadRequest", (endpointData, JWT) => {
+    const requestConfig = {
+        method: endpointData.requestType,
+        url: settings.baseURL + endpointData.endpoint,
+        failOnStatusCode: false,
+    };
+    if (JWT) {
+        requestConfig.headers = {
+            Authorization: JWT,
+        };
+    }
+    requestConfig.url = getBadReplacementUrl(requestConfig.url);
+    cy.request(requestConfig).then((response) => {
+        console.log(response);
+    });
+});
+
 function whatToExpect(statuscode) {
     switch (statuscode) {
         case "200":
@@ -106,28 +155,12 @@ Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JW
             if (objSwaggerData.security && objSwaggerData.security.length > 0) {
                 JWT = JWTs.adminJWT;
             }
-            cy.log(objSwaggerData);
-            cy.log(JWT);
-            cy.log(bodyParams);
-            cy.log(replaceData);
-            console.log(objSwaggerData);
-            console.log(JWT);
-            console.log(bodyParams);
-            console.log(replaceData);
             cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
                 cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
                 return testResponse;
             });
             break;
         case "401":
-            cy.log(objSwaggerData);
-            cy.log(JWT);
-            cy.log(bodyParams);
-            cy.log(replaceData);
-            console.log(objSwaggerData);
-            console.log(JWT);
-            console.log(bodyParams);
-            console.log(replaceData);
             cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
                 cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
                 return testResponse;
@@ -137,14 +170,6 @@ Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JW
             if (objSwaggerData.security && objSwaggerData.security.length > 0) {
                 JWT = JWTs.userJWT;
             }
-            cy.log(objSwaggerData);
-            cy.log(JWT);
-            cy.log(bodyParams);
-            cy.log(replaceData);
-            console.log(objSwaggerData);
-            console.log(JWT);
-            console.log(bodyParams);
-            console.log(replaceData);
             cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.passReplaceData).then((testResponse) => {
                 cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
                 return testResponse;
@@ -154,14 +179,6 @@ Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JW
             if (objSwaggerData.security && objSwaggerData.security.length > 0) {
                 JWT = JWTs.adminJWT;
             }
-            cy.log(objSwaggerData);
-            cy.log(JWT);
-            cy.log(bodyParams);
-            cy.log(replaceData);
-            console.log(objSwaggerData);
-            console.log(JWT);
-            console.log(bodyParams);
-            console.log(replaceData);
             cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParamsBadPayload, replaceData.passReplaceData).then((testResponse) => {
                 cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
                 return testResponse;
@@ -171,16 +188,7 @@ Cypress.Commands.add("testEndpointResponse", (responseStatus, objSwaggerData, JW
             if (objSwaggerData.security && objSwaggerData.security.length > 0) {
                 JWT = JWTs.adminJWT;
             }
-            cy.log(objSwaggerData);
-            cy.log(JWT);
-            cy.log(bodyParams);
-            cy.log(replaceData);
-            console.log(objSwaggerData);
-            console.log(JWT);
-            console.log(bodyParams);
-            console.log(replaceData);
             bodyParams.bodyParams = create404FromParameters(bodyParams.bodyParams);
-            console.log(bodyParams);
             cy.apiRequest(objSwaggerData, JWT, bodyParams.bodyParams, replaceData.failReplaceData).then((testResponse) => {
                 cy.expect(testResponse.status).to.oneOf(whatToExpect(responseStatus));
                 return testResponse;
@@ -196,4 +204,48 @@ function create404FromParameters(bodyParams) {
         }
     });
     return bodyParams;
+}
+
+function getReplacementUrl(responseBody, url) {
+    responseBody.forEach((response) => {
+        const rxp = /{([^}]+)}/g;
+        let curMatch;
+        const foundReplacements = [];
+        while ((curMatch = rxp.exec(url))) {
+            foundReplacements.push(curMatch[1]);
+        }
+        foundReplacements.forEach((replacement) => {
+            const find = "{" + replacement + "}";
+            let replacementString = replacement;
+            if (replacement == "code") {
+                replacementString = "teamcode";
+            }
+            if (replacement == "userId") {
+                replacementString = "_id";
+            }
+            if (replacement == "id" && url.indexOf("/teamrequests/") !== -1) {
+                replacementString = "_id";
+            }
+            if (replacement == "id" && url.indexOf("/teammembers/") !== -1) {
+                replacementString = "_id";
+            }
+            const replace = response[replacementString];
+            url = url.replace(find, replace);
+        });
+    });
+    return url;
+}
+
+function getBadReplacementUrl(url) {
+    const rxp = /{([^}]+)}/g;
+    let curMatch;
+    const foundReplacements = [];
+    while ((curMatch = rxp.exec(url))) {
+        foundReplacements.push(curMatch[1]);
+    }
+    foundReplacements.forEach((replacement) => {
+        const replace = "BGanzCcSAtooEMakr6UjN8rUzRmrCA";
+        url = url.replace(find, replace);
+    });
+    return url;
 }

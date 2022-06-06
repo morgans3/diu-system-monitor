@@ -62,53 +62,64 @@ describe("Test Endpoints", () => {
 
     it("Check GET BY PARAMS endpoints - SUCCESS (200)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && !x.endpoint.includes("{");
+            return (
+                x.requestType === "get" &&
+                x.parameters &&
+                !exclusions.isInExclusionList(x.tags[0]) &&
+                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
+                x.endpoint.includes("{")
+            );
         });
         console.log("Get by parameters endpoints...");
-        console.log(testingGETBYEndpointList);
 
         // TODO: Add tests
         testingGETBYEndpointList.forEach((endpoint) => {
+            const getAllEndpoint = controller.getAllTags[endpoint.tags[0]];
             if (endpoint.responses["403"]) {
-                // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
+                cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
+                    cy.expect(response.status).to.be.equal(403);
+                });
             } else if (endpoint.security) {
-                // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
+                cy.apiGetByParamsRequest(endpoint, JWTs.adminJWT, getAllEndpoint).then((response) => {
+                    cy.expect(response.status).to.be.equal(200);
+                });
             } else {
-                // cy.apiRequest(endpoint).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
+                cy.apiGetByParamsRequest(endpoint, "", getAllEndpoint).then((response) => {
+                    cy.expect(response.status).to.be.equal(200);
+                });
             }
         });
     });
 
     it("Check GET BY PARAMS endpoints - BAD Requests (404)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && !x.endpoint.includes("{");
+            return (
+                x.requestType === "get" &&
+                x.parameters &&
+                !exclusions.isInExclusionList(x.tags[0]) &&
+                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
+                x.endpoint.includes("{")
+            );
         });
         console.log("Get by parameters endpoints...");
-        console.log(testingGETBYEndpointList);
+        // console.log(testingGETBYEndpointList);
 
-        // TODO: Add tests
         testingGETBYEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["404"]) {
+            testingGETBYEndpointList.forEach((endpoint) => {
                 if (endpoint.responses["403"]) {
-                    // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+                    cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
+                        cy.expect(response.status).to.be.equal(403);
+                    });
                 } else if (endpoint.security) {
-                    // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+                    cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 } else {
-                    // cy.apiRequest(endpoint).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+                    cy.apiGetByParamsBadRequest(endpoint, "").then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 }
-            }
+            });
         });
     });
 });

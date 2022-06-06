@@ -11,6 +11,7 @@ const postExclusionList = [
     "NICEEvidenceSearch",
 ];
 const exclusionList = ["Demographics", "Docobo", "DocoboOutbound", "MFA", "PostCodes", "Trials", "Users", "SearchUsers"];
+const getByParamsExclusionList = ["Confluence", "Capabilities", "Roles", "UserProfiles"];
 
 const isInExclusionList = (tag) => {
     return exclusionList.includes(tag);
@@ -28,9 +29,14 @@ const isInPOSTExclusionList = (tag) => {
     return postExclusionList.includes(tag);
 };
 
+const isInGetByParamsExclusionList = (tag) => {
+    return getByParamsExclusionList.includes(tag);
+};
+
 module.exports.Exclusions = {
     isInExclusionList,
     isInDeletionExclusionList,
     isInPutExclusionList,
     isInPOSTExclusionList,
+    isInGetByParamsExclusionList,
 };
