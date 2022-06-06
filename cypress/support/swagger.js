@@ -244,6 +244,7 @@ function getBadReplacementUrl(url) {
         foundReplacements.push(curMatch[1]);
     }
     foundReplacements.forEach((replacement) => {
+        const find = "{" + replacement + "}";
         const replace = "BGanzCcSAtooEMakr6UjN8rUzRmrCA";
         url = url.replace(find, replace);
     });

@@ -79,7 +79,8 @@ describe("Test Endpoints", () => {
                 cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(403);
                 });
-            } else if (endpoint.security) {
+            }
+            if (endpoint.security) {
                 cy.apiGetByParamsRequest(endpoint, JWTs.adminJWT, getAllEndpoint).then((response) => {
                     cy.expect(response.status).to.be.equal(200);
                 });
@@ -109,7 +110,8 @@ describe("Test Endpoints", () => {
                 cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(403);
                 });
-            } else if (endpoint.security) {
+            }
+            if (endpoint.security) {
                 cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(404);
                 });
