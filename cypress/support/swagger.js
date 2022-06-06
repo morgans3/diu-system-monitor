@@ -217,16 +217,16 @@ function getReplacementUrl(responseBody, url) {
         foundReplacements.forEach((replacement) => {
             const find = "{" + replacement + "}";
             let replacementString = replacement;
-            if (replacement == "code") {
+            if (replacement === "code") {
                 replacementString = "teamcode";
             }
-            if (replacement == "userId") {
+            if (replacement === "userId") {
                 replacementString = "_id";
             }
-            if (replacement == "id" && url.indexOf("/teamrequests/") !== -1) {
+            if (replacement === "id" && url.indexOf("/teamrequests/") !== -1) {
                 replacementString = "_id";
             }
-            if (replacement == "id" && url.indexOf("/teammembers/") !== -1) {
+            if (replacement === "id" && url.indexOf("/teammembers/") !== -1) {
                 replacementString = "_id";
             }
             const replace = response[replacementString];

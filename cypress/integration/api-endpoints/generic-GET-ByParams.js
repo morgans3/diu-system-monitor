@@ -105,21 +105,19 @@ describe("Test Endpoints", () => {
         // console.log(testingGETBYEndpointList);
 
         testingGETBYEndpointList.forEach((endpoint) => {
-            testingGETBYEndpointList.forEach((endpoint) => {
-                if (endpoint.responses["403"]) {
-                    cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                        cy.expect(response.status).to.be.equal(403);
-                    });
-                } else if (endpoint.security) {
-                    cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
-                        cy.expect(response.status).to.be.equal(404);
-                    });
-                } else {
-                    cy.apiGetByParamsBadRequest(endpoint, "").then((response) => {
-                        cy.expect(response.status).to.be.equal(404);
-                    });
-                }
-            });
+            if (endpoint.responses["403"]) {
+                cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
+                    cy.expect(response.status).to.be.equal(403);
+                });
+            } else if (endpoint.security) {
+                cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
+                    cy.expect(response.status).to.be.equal(404);
+                });
+            } else {
+                cy.apiGetByParamsBadRequest(endpoint, "").then((response) => {
+                    cy.expect(response.status).to.be.equal(404);
+                });
+            }
         });
     });
 });

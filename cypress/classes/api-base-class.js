@@ -170,14 +170,14 @@ class ApiBaseClass {
     }
 
     isGetAll(arrEndpointData) {
-        if (arrEndpointData.length == 2 && arrEndpointData[0] === "") {
+        if (arrEndpointData.length === 2 && arrEndpointData[0] === "") {
             return true;
         }
-        if (arrEndpointData.length == 3 && arrEndpointData[0] === "" && arrEndpointData[2] === "") {
+        if (arrEndpointData.length === 3 && arrEndpointData[0] === "" && arrEndpointData[2] === "") {
             return true;
         }
         if (
-            arrEndpointData.length == 3 &&
+            arrEndpointData.length === 3 &&
             arrEndpointData[0] === "" &&
             arrEndpointData[1] === "atomic" &&
             arrEndpointData[2] === "payloads"
@@ -185,7 +185,7 @@ class ApiBaseClass {
             return true;
         }
         if (
-            arrEndpointData.length == 3 &&
+            arrEndpointData.length === 3 &&
             arrEndpointData[0] === "" &&
             arrEndpointData[1] === "atomic" &&
             arrEndpointData[2] === "formdata"
