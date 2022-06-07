@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("users").then((userDetails) => {
+    cy.fixture("cypressaccounts").then((userDetails) => {
         JWTs.username = userDetails.username;
         const userData = {
             username: userDetails.username,
