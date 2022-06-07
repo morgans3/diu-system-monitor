@@ -9,6 +9,16 @@ const postExclusionList = [
     "GPInpatients",
     "GovUKNotify",
     "NICEEvidenceSearch",
+    "Capabilities",
+    "Roles",
+    "Teams",
+    "UserProfiles",
+    "Requests",
+    "DocoboOutbound",
+    "HouseholdIsochrone",
+    "Trials",
+    "Users",
+    "VirtualWards",
 ];
 const exclusionList = ["Demographics", "Docobo", "DocoboOutbound", "MFA", "PostCodes", "Trials", "Users", "SearchUsers"];
 const getByParamsExclusionList = ["Confluence", "Capabilities", "Roles", "UserProfiles"];
