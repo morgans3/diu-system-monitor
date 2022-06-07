@@ -4,7 +4,6 @@ const deletionExclusionList = [
     "TeamRequests",
     "Teams",
     "Capabilities",
-    "NewsFeeds",
     "Organisations",
     "Roles",
     "TeamMembers",
@@ -23,7 +22,6 @@ const putExclusionList = [
     "UserProfiles",
     "VirtualWards",
     "Dashboards",
-    "NewsFeeds",
     "Organisations",
     "SystemAlerts",
 ];
