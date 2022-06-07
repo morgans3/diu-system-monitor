@@ -1,5 +1,32 @@
-const deletionExclusionList = ["Cohorts", "CVICohorts", "TeamRequests", "Teams"];
-const putExclusionList = ["Cohorts", "CVICohorts", "Password", "TeamMembers", "TeamRequests", "Teams"];
+const deletionExclusionList = [
+    "Cohorts",
+    "CVICohorts",
+    "TeamRequests",
+    "Teams",
+    "Capabilities",
+    "NewsFeeds",
+    "Organisations",
+    "Roles",
+    "TeamMembers",
+    "UserProfiles",
+    "Users",
+];
+const putExclusionList = [
+    "Cohorts",
+    "CVICohorts",
+    "Password",
+    "TeamMembers",
+    "TeamRequests",
+    "Teams",
+    "Capabilities",
+    "Roles",
+    "UserProfiles",
+    "VirtualWards",
+    "Dashboards",
+    "NewsFeeds",
+    "Organisations",
+    "SystemAlerts",
+];
 const postExclusionList = [
     "Demographics",
     "Docobo",
