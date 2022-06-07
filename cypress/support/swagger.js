@@ -229,8 +229,14 @@ function getReplacementUrl(responseBody, url) {
             if (replacement === "id" && url.indexOf("/teammembers/") !== -1) {
                 replacementString = "_id";
             }
+            if (replacement === "user") {
+                replacementString = "username#org";
+            }
             const replace = response[replacementString];
             url = url.replace(find, replace);
+            if (url.indexOf("#") !== -1) {
+                url = url.replace("#", "%23");
+            }
         });
     });
     return url;
