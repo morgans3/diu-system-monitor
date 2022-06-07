@@ -45,7 +45,6 @@ const createFixtureData = (bodyData) => {
     });
     Object.keys(bodyParams.bodyParams).forEach((key) => {
         let fileName = path.join(__dirname, "/cypress/fixtures/", key.toLowerCase() + ".json");
-
         fileName = fileName.replace(" ", "-");
         fs.writeFile(fileName, JSON.stringify(bodyParams.bodyParams[key]), (err) => {
             if (err) {
@@ -56,7 +55,7 @@ const createFixtureData = (bodyData) => {
     Object.keys(bodyParams.bodyParamsFail).forEach((key) => {
         let fileName = path.join(__dirname, "/cypress/fixtures/", "wrong-" + key.toLowerCase() + ".json");
         fileName = fileName.replace(" ", "-");
-        fs.writeFile(fileName, JSON.stringify(bodyParams.bodyParams[key]), (err) => {
+        fs.writeFile(fileName, JSON.stringify(bodyParams.bodyParamsFail[key]), (err) => {
             if (err) {
                 console.error(err);
             }
