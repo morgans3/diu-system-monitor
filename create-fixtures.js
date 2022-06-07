@@ -1,15 +1,16 @@
 const { faker } = require("@faker-js/faker");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
+const path = require("path");
 
-const createFixtureData = (data) => {
-    let swagggerData = {};
-    let bodyParams = {
+const createFixtureData = (bodyData) => {
+    const swagggerData = {};
+    const bodyParams = {
         bodyParams: {},
         bodyParamsFail: {},
         bodyParamsBadPayload: {},
     };
-    const swaggerPathData = JSON.parse(data).paths;
+    const swaggerPathData = JSON.parse(bodyData).paths;
     Object.keys(swaggerPathData).forEach((endpoint) => {
         Object.keys(swaggerPathData[endpoint]).forEach((requestType) => {
             const APIInformation = swaggerPathData[endpoint][requestType];
@@ -43,25 +44,22 @@ const createFixtureData = (data) => {
         });
     });
     Object.keys(bodyParams.bodyParams).forEach((key) => {
-        let fileName = __dirname + "/cypress/fixtures/" + key.toLowerCase() + ".json";
+        let fileName = path.join(__dirname, "/cypress/fixtures/", key.toLowerCase() + ".json");
+
         fileName = fileName.replace(" ", "-");
         fs.writeFile(fileName, JSON.stringify(bodyParams.bodyParams[key]), (err) => {
             if (err) {
                 console.error(err);
-                return;
             }
-            // console.log(fileName + " was written successfully");
         });
     });
     Object.keys(bodyParams.bodyParamsFail).forEach((key) => {
-        let fileName = __dirname + "/cypress/fixtures/wrong-" + key.toLowerCase() + ".json";
+        let fileName = path.join(__dirname, "/cypress/fixtures/", "wrong-" + key.toLowerCase() + ".json");
         fileName = fileName.replace(" ", "-");
         fs.writeFile(fileName, JSON.stringify(bodyParams.bodyParams[key]), (err) => {
             if (err) {
                 console.error(err);
-                return;
             }
-            // console.log(fileName + " was written successfully");
         });
     });
 };
@@ -121,13 +119,13 @@ function fakerData(data) {
         case "":
         default:
             if (data.schema) {
-                let fakerObject = {};
+                const fakerObject = {};
                 if (data.schema.properties) {
                     Object.keys(data.schema.properties).forEach((property) => {
                         fakerObject[property] = fakerData({ type: data.schema.properties[property].type, name: property });
                     });
                 }
-                let returnData = {};
+                const returnData = {};
                 returnData[data.name] = fakerObject;
                 return fakerObject;
             }
