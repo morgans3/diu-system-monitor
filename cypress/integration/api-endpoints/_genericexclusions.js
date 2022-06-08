@@ -23,7 +23,6 @@ const putExclusionList = [
     "VirtualWards",
     "Dashboards",
     "Organisations",
-    "SystemAlerts",
 ];
 const postExclusionList = [
     "Demographics",
