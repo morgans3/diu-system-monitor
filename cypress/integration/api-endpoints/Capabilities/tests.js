@@ -300,29 +300,69 @@ describe("Test get by capabilities link create", () => {
     });
 });
 
-describe("Test get by capabilities link sync", () => {
-    let linkDeleteEndpoint;
+describe("Test get by ID & Type Method", () => {
+    let getByTypeIDEndpoint;
     it("Check method exists", () => {
-        linkDeleteEndpoint = endpoints.find((x) => {
+        getByTypeIDEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/{type}/{id}/capabilities";
+        });
+        cy.expect(getByTypeIDEndpoint).to.be.a("object");
+    });
+
+    it("Test for get by ID & Type capabilities (200)", () => {
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace("{id}", capabilityLinkFixture.link_id);
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace("{type}", capabilityLinkFixture.link_type);
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace("#", "%23");
+        cy.apiRequest(getByTypeIDEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for get by ID & Type capabilities (204)", () => {
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace("%23", "#");
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace(capabilityLinkFixture.link_id, "dojoidfhiudbfisdb");
+        cy.apiRequest(getByTypeIDEndpoint, JWTs.userJWT, {}).then((response) => {
+            cy.expect(response.status).to.be.equal(204);
+        });
+    });
+
+    it("Test for get by ID & Type capabilities (400)", () => {
+        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace(capabilityLinkFixture.link_type, "dojoidfhiudbfisdb");
+        cy.apiRequest(getByTypeIDEndpoint, JWTs.userJWT, {}).then((response) => {
+            cy.expect(response.status).to.be.equal(400);
+        });
+    });
+
+    it("Test for get by ID & Type capabilities (401)", () => {
+        cy.apiRequest(getByTypeIDEndpoint, "", {}).then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+});
+
+describe("Test get by capabilities link sync", () => {
+    let linkSyncEndpoint;
+    it("Check method exists", () => {
+        linkSyncEndpoint = endpoints.find((x) => {
             return x.endpoint === "/capabilities/links/sync";
         });
-        cy.expect(linkDeleteEndpoint).to.be.a("object");
+        cy.expect(linkSyncEndpoint).to.be.a("object");
     });
 
     it("Test for syncing capability links (200)", () => {
-        cy.apiRequest(linkDeleteEndpoint, JWTs.adminJWT, capabilityLinkSyncFixture).then((response) => {
+        cy.apiRequest(linkSyncEndpoint, JWTs.adminJWT, capabilityLinkSyncFixture).then((response) => {
             cy.expect(response.status).to.be.equal(200);
         });
     });
 
     it("Test for syncing capability links (401)", () => {
-        cy.apiRequest(linkDeleteEndpoint, "", capabilityLinkSyncFixture).then((response) => {
+        cy.apiRequest(linkSyncEndpoint, "", capabilityLinkSyncFixture).then((response) => {
             cy.expect(response.status).to.be.equal(401);
         });
     });
 
     it("Test for syncing capability links (403)", () => {
-        cy.apiRequest(linkDeleteEndpoint, JWTs.userJWT, capabilityLinkSyncFixture).then((response) => {
+        cy.apiRequest(linkSyncEndpoint, JWTs.userJWT, capabilityLinkSyncFixture).then((response) => {
             cy.expect(response.status).to.be.equal(403);
         });
     });
