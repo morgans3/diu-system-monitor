@@ -326,13 +326,6 @@ describe("Test get by ID & Type Method", () => {
         });
     });
 
-    it("Test for get by ID & Type capabilities (400)", () => {
-        getByTypeIDEndpoint.endpoint = getByTypeIDEndpoint.endpoint.replace(capabilityLinkFixture.link_type, "dojoidfhiudbfisdb");
-        cy.apiRequest(getByTypeIDEndpoint, JWTs.userJWT, {}).then((response) => {
-            cy.expect(response.status).to.be.equal(400);
-        });
-    });
-
     it("Test for get by ID & Type capabilities (401)", () => {
         cy.apiRequest(getByTypeIDEndpoint, "", {}).then((response) => {
             cy.expect(response.status).to.be.equal(401);
