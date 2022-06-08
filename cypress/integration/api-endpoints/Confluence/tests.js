@@ -2,11 +2,6 @@ const ApiBaseClass = require("../../../classes/api-base-class");
 let controller;
 let endpoints;
 let swaggerResponse;
-const JWTs = {
-    userJWT: "",
-    adminJWT: "",
-    username: "",
-};
 let searchID;
 
 before(() => {
