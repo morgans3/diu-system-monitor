@@ -103,7 +103,7 @@ describe("Test Get All Method", () => {
         cy.expect(getAllEndpoint).to.be.a("object");
     });
 
-    it("Test for get all pages (200)", () => {
+    it("Test for get all (200)", () => {
         cy.apiRequest(getAllEndpoint, JWTs.adminJWT, {}).then((response) => {
             cy.expect(response.status).to.be.equal(200);
             if (response.body.length > 0) {
@@ -116,7 +116,7 @@ describe("Test Get All Method", () => {
         });
     });
 
-    it("Test for get all pages (401)", () => {
+    it("Test for get all (401)", () => {
         cy.apiRequest(getAllEndpoint, "", {}).then((response) => {
             cy.expect(response.status).to.be.equal(401);
         });
@@ -161,20 +161,20 @@ describe("Test get by ID Method", () => {
         cy.expect(getByIDEndpoint).to.be.a("object");
     });
 
-    it("Test for update capabilities (200)", () => {
+    it("Test for get by ID capabilities (200)", () => {
         getByIDEndpoint.endpoint = getByIDEndpoint.endpoint.replace("{id}", fixture.id);
         cy.apiRequest(getByIDEndpoint, JWTs.adminJWT).then((response) => {
             cy.expect(response.status).to.be.equal(200);
         });
     });
 
-    it("Test for update capabilities (401)", () => {
+    it("Test for get by ID capabilities (401)", () => {
         cy.apiRequest(getByIDEndpoint, "", {}).then((response) => {
             cy.expect(response.status).to.be.equal(401);
         });
     });
 
-    it("Test for update capabilities (404)", () => {
+    it("Test for get by ID capabilities (404)", () => {
         getByIDEndpoint.endpoint = getByIDEndpoint.endpoint.replace(fixture.id, "0");
         cy.apiRequest(getByIDEndpoint, JWTs.userJWT, {}).then((response) => {
             cy.expect(response.status).to.be.equal(404);
@@ -204,13 +204,13 @@ describe("Test delete Method", () => {
         });
     });
 
-    it("Test for update capabilities (401)", () => {
+    it("Test for delete capabilities (401)", () => {
         cy.apiRequest(deleteEndpoint, "", {}).then((response) => {
             cy.expect(response.status).to.be.equal(401);
         });
     });
 
-    it("Test for update capabilities (403)", () => {
+    it("Test for delete capabilities (403)", () => {
         cy.apiRequest(deleteEndpoint, JWTs.userJWT, {}).then((response) => {
             cy.expect(response.status).to.be.equal(403);
         });
@@ -224,13 +224,64 @@ describe("Test get by Tag Method", () => {
             return x.endpoint === "/capabilities/tags/getByTag";
         });
         cy.expect(getByTagEndpoint).to.be.a("object");
-        console.log(getByTagEndpoint);
     });
 
-    it("Test for update capabilities (200)", () => {
-        getByTagEndpoint.endpoint += "?tag=Patient";
+    it("Test for get by Tag (200)", () => {
+        getByTagEndpoint.endpoint += "?tags=Patient";
         cy.apiRequest(getByTagEndpoint, JWTs.adminJWT).then((response) => {
             cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for get by Tag (401)", () => {
+        cy.apiRequest(getByTagEndpoint, "").then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+});
+
+describe("Test get by Multiple Tags (and) Method", () => {
+    let getByTagsAndEndpoint;
+    it("Check method exists", () => {
+        getByTagsAndEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/tags/getByTagsAnd";
+        });
+        cy.expect(getByTagsAndEndpoint).to.be.a("object");
+    });
+
+    it("Test for get by Tag (200)", () => {
+        getByTagsAndEndpoint.endpoint += "?tags[]=Patient,Health";
+        cy.apiRequest(getByTagsAndEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for get by Tag (401)", () => {
+        cy.apiRequest(getByTagsAndEndpoint, "").then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+});
+
+describe("Test get by Multiple Tags (or) Method", () => {
+    let getByTagsOrEndpoint;
+    it("Check method exists", () => {
+        getByTagsOrEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/tags/getByTagsOr";
+        });
+        cy.expect(getByTagsOrEndpoint).to.be.a("object");
+    });
+
+    it("Test for get by Tag (200)", () => {
+        getByTagsOrEndpoint.endpoint += "?tags[]=Patient,App";
+        cy.apiRequest(getByTagsOrEndpoint, JWTs.adminJWT).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for get by Tag (401)", () => {
+        cy.apiRequest(getByTagsOrEndpoint, "").then((response) => {
+            cy.expect(response.status).to.be.equal(401);
         });
     });
 });
