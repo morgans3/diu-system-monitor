@@ -18,6 +18,7 @@ module.exports = {
         "comma-dangle": "off",
         complexity: "off",
         "constructor-super": "error",
+        "cypress/no-unnecessary-waiting": "off",
         "dot-notation": "off",
         eqeqeq: ["error", "smart"],
         "guard-for-in": "off",
@@ -87,7 +88,7 @@ module.exports = {
         "one-var": ["error", "never"],
         "prefer-const": "error",
         "quote-props": ["error", "as-needed"],
-        quotes: ["error", "double", { avoidEscape: true }],
+        quotes: ["error", "double", { avoidEscape: true, allowTemplateLiterals: true }],
         "spaced-comment": [
             "error",
             "always",

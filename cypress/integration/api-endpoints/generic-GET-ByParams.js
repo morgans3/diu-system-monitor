@@ -8,13 +8,12 @@ const JWTs = {
 };
 
 before(() => {
-    // Act
     cy.getSwaggerData().then((swaggerData) => {
         swaggerResponse = swaggerData;
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("users").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -62,52 +61,51 @@ describe("Test Endpoints", () => {
 
     it("Check GET BY PARAMS endpoints - SUCCESS (200)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && !x.endpoint.includes("{");
+            return (
+                x.requestType === "get" &&
+                x.parameters &&
+                !exclusions.isInExclusionList(x.tags[0]) &&
+                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
+                x.endpoint.includes("{")
+            );
         });
         console.log("Get by parameters endpoints...");
-        console.log(testingGETBYEndpointList);
 
-        // TODO: Add tests
         testingGETBYEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["403"]) {
-                // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else if (endpoint.security) {
-                // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
+            const getAllEndpoint = controller.getAllTags[endpoint.tags[0]]; // TODO: Standardisation of API?
+            if (endpoint.security) {
+                cy.apiGetByParamsRequest(endpoint, JWTs.adminJWT, getAllEndpoint).then((response) => {
+                    cy.expect(response.status).to.be.equal(200);
+                });
             } else {
-                // cy.apiRequest(endpoint).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
+                cy.apiGetByParamsRequest(endpoint, "", getAllEndpoint).then((response) => {
+                    cy.expect(response.status).to.be.equal(200);
+                });
             }
         });
     });
 
     it("Check GET BY PARAMS endpoints - BAD Requests (404)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && !x.endpoint.includes("{");
+            return (
+                x.requestType === "get" &&
+                x.parameters &&
+                !exclusions.isInExclusionList(x.tags[0]) &&
+                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
+                x.endpoint.includes("{")
+            );
         });
         console.log("Get by parameters endpoints...");
-        console.log(testingGETBYEndpointList);
 
-        // TODO: Add tests
         testingGETBYEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["404"]) {
-                if (endpoint.responses["403"]) {
-                    // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
-                } else if (endpoint.security) {
-                    // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
-                } else {
-                    // cy.apiRequest(endpoint).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
-                }
+            if (endpoint.security) {
+                cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
+                    cy.expect(response.status).to.be.equal(404);
+                });
+            } else {
+                cy.apiGetByParamsBadRequest(endpoint, "").then((response) => {
+                    cy.expect(response.status).to.be.equal(404);
+                });
             }
         });
     });

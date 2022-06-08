@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("users").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -61,52 +61,55 @@ describe("Test Endpoints", () => {
     });
 
     it("Check PUT endpoints - SUCCESS (200)", () => {
-        const testingPUTTEndpointList = controller.orderedEndpointData.filter((x) => {
+        const testingPUTEndpointList = controller.orderedEndpointData.filter((x) => {
             return x.requestType === "put" && !exclusions.isInPutExclusionList(x.tags[0]);
         });
         console.log("Put endpoints...");
-        console.log(testingPUTTEndpointList);
+        console.log(testingPUTEndpointList);
 
-        // TODO: Add tests
-        testingPUTTEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["403"]) {
-                // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else if (endpoint.security) {
-                // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else {
-                // cy.apiRequest(endpoint).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            }
+        testingPUTEndpointList.forEach((endpoint) => {
+            // TODO: Switch from on-disk to in-memory storage
+            let fixtureName = endpoint.tags[0].toLowerCase();
+            fixtureName = fixtureName.replace(" ", "-");
+            cy.fixture(fixtureName).then((bodyParams) => {
+                if (endpoint.security) {
+                    cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                } else {
+                    cy.apiRequest(endpoint, "", bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                }
+            });
         });
     });
 
     it("Check PUT endpoints - BAD Requests (404)", () => {
-        const testingPUTTEndpointList = controller.orderedEndpointData.filter((x) => {
+        const testingPUTEndpointList = controller.orderedEndpointData.filter((x) => {
             return x.requestType === "put" && !exclusions.isInPutExclusionList(x.tags[0]);
         });
 
-        // TODO: Add tests
-        testingPUTTEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["404"]) {
-                if (endpoint.responses["403"]) {
-                    // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
-                } else if (endpoint.security) {
-                    // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+        testingPUTEndpointList.forEach((endpoint) => {
+            // TODO: Switch from on-disk to in-memory storage
+            let fixtureName = endpoint.tags[0].toLowerCase();
+            fixtureName = fixtureName.replace(" ", "-");
+            cy.fixture(fixtureName).then((bodyParams) => {
+                Object.keys(bodyParams).forEach((key) => {
+                    if (typeof bodyParams[key] === "string") {
+                        bodyParams[key] += "1";
+                    }
+                });
+                if (endpoint.security) {
+                    cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 } else {
-                    // cy.apiRequest(endpoint).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+                    cy.apiRequest(endpoint, "", bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 }
-            }
+            });
         });
     });
 });

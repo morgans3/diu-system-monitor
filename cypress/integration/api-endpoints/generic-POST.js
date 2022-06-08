@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("users").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -67,21 +67,21 @@ describe("Test Endpoints", () => {
         console.log("Post endpoints...");
         console.log(testingPOSTEndpointList);
 
-        // TODO: Add tests
         testingPOSTEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["403"]) {
-                // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else if (endpoint.security) {
-                // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else {
-                // cy.apiRequest(endpoint).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            }
+            // TODO: Switch from on-disk to in-memory storage
+            let fixtureName = endpoint.tags[0].toLowerCase();
+            fixtureName = fixtureName.replace(" ", "-");
+            cy.fixture(fixtureName).then((bodyParams) => {
+                if (endpoint.security) {
+                    cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                } else {
+                    cy.apiRequest(endpoint, "", bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                }
+            });
         });
     });
 });

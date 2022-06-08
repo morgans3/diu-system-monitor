@@ -39,11 +39,11 @@ const configureServiceAccounts = async (services) => {
                 org,
                 key: credentials[org],
             };
-            fs.writeFileSync("./cypress/fixtures/govuk.json", JSON.stringify(govukJSON));
+            fs.writeFileSync("./cypress/fixtures/secrets/govuk.json", JSON.stringify(govukJSON));
         }
         securegroup.push({ org, key: credentials[org] || null });
     });
-    fs.writeFileSync("./cypress/fixtures/serviceaccounts.json", JSON.stringify(securegroup));
+    fs.writeFileSync("./cypress/fixtures/secrets/serviceaccounts.json", JSON.stringify(securegroup));
 };
 
 module.exports = {
@@ -72,7 +72,7 @@ module.exports = {
                             obj[key] = credentials[secret[key]];
                             secrets.push(obj);
                         });
-                        fs.writeFileSync("./cypress/fixtures/" + api.secretName + ".json", JSON.stringify(secrets));
+                        fs.writeFileSync("./cypress/fixtures/secrets/" + api.secretName + ".json", JSON.stringify(secrets));
                         console.log("Loaded configuration for: " + api.configName);
                     } catch (e) {
                         console.error("Could not configure " + api.configName + " settings");

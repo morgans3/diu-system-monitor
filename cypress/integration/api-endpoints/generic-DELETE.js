@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("users").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -67,21 +67,21 @@ describe("Test Endpoints", () => {
         console.log("Delete endpoints...");
         console.log(testingDELETEEndpointList);
 
-        // TODO: Add tests
         testingDELETEEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["403"]) {
-                // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else if (endpoint.security) {
-                // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            } else {
-                // cy.apiRequest(endpoint).then((response) => {
-                //     cy.expect(response.status).to.be.equal(200);
-                // });
-            }
+            // TODO: Switch from on-disk to in-memory storage
+            let fixtureName = endpoint.tags[0].toLowerCase();
+            fixtureName = fixtureName.replace(" ", "-");
+            cy.fixture(fixtureName).then((bodyParams) => {
+                if (endpoint.security) {
+                    cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                } else {
+                    cy.apiRequest(endpoint, "", bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(200);
+                    });
+                }
+            });
         });
     });
 
@@ -90,23 +90,26 @@ describe("Test Endpoints", () => {
             return x.requestType === "delete" && !exclusions.isInDeletionExclusionList(x.tags[0]);
         });
 
-        // TODO: Add tests
         testingDELETEEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["404"]) {
-                if (endpoint.responses["403"]) {
-                    // cy.apiRequest(endpoint, JWTs.adminJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
-                } else if (endpoint.security) {
-                    // cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+            // TODO: Switch from on-disk to in-memory storage
+            let fixtureName = endpoint.tags[0].toLowerCase();
+            fixtureName = fixtureName.replace(" ", "-");
+            cy.fixture(fixtureName).then((bodyParams) => {
+                Object.keys(bodyParams).forEach((key) => {
+                    if (typeof bodyParams[key] === "string") {
+                        bodyParams[key] += "1";
+                    }
+                });
+                if (endpoint.security) {
+                    cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 } else {
-                    // cy.apiRequest(endpoint).then((response) => {
-                    //     cy.expect(response.status).to.be.equal(404);
-                    // });
+                    cy.apiRequest(endpoint, "", bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
                 }
-            }
+            });
         });
     });
 });

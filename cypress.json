@@ -1,3 +1,4 @@
 {
-    "projectId": "diu-system-monitor"
+    "projectId": "diu-system-monitor",
+    "responsetimeout": "60000"
 }
