@@ -2,7 +2,7 @@ node_modules
 
 sorry-cypress/*
 
-cypress/fixtures/*
+cypress/fixtures/secrets/*
 cypress/screenshots/*
 cypress/videos/*
 

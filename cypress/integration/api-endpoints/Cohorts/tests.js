@@ -18,7 +18,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("cypressaccounts").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,

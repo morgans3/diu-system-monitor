@@ -12,7 +12,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("govukkey").then((userDetails) => {
+    cy.fixture("secrets/govukkey").then((userDetails) => {
         userDetails.forEach((user) => {
             if (user["govukkey"]) JWTs.govukkey = user["govukkey"];
         });

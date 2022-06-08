@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("cypressaccounts").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -67,16 +67,11 @@ describe("Test Endpoints", () => {
         console.log("Post endpoints...");
         console.log(testingPOSTEndpointList);
 
-        // TODO: Add tests
         testingPOSTEndpointList.forEach((endpoint) => {
+            // TODO: Switch from on-disk to in-memory storage
             let fixtureName = endpoint.tags[0].toLowerCase();
             fixtureName = fixtureName.replace(" ", "-");
             cy.fixture(fixtureName).then((bodyParams) => {
-                if (endpoint.responses["403"]) {
-                    cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                        cy.expect(response.status).to.be.equal(403);
-                    });
-                }
                 if (endpoint.security) {
                     cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
                         cy.expect(response.status).to.be.equal(200);

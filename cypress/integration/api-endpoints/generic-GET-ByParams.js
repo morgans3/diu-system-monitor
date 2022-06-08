@@ -8,13 +8,12 @@ const JWTs = {
 };
 
 before(() => {
-    // Act
     cy.getSwaggerData().then((swaggerData) => {
         swaggerResponse = swaggerData;
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("cypressaccounts").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -72,14 +71,8 @@ describe("Test Endpoints", () => {
         });
         console.log("Get by parameters endpoints...");
 
-        // TODO: Add tests
         testingGETBYEndpointList.forEach((endpoint) => {
-            const getAllEndpoint = controller.getAllTags[endpoint.tags[0]];
-            if (endpoint.responses["403"]) {
-                cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    cy.expect(response.status).to.be.equal(403);
-                });
-            }
+            const getAllEndpoint = controller.getAllTags[endpoint.tags[0]]; // TODO: Standardisation of API?
             if (endpoint.security) {
                 cy.apiGetByParamsRequest(endpoint, JWTs.adminJWT, getAllEndpoint).then((response) => {
                     cy.expect(response.status).to.be.equal(200);
@@ -103,14 +96,8 @@ describe("Test Endpoints", () => {
             );
         });
         console.log("Get by parameters endpoints...");
-        // console.log(testingGETBYEndpointList);
 
         testingGETBYEndpointList.forEach((endpoint) => {
-            if (endpoint.responses["403"]) {
-                cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                    cy.expect(response.status).to.be.equal(403);
-                });
-            }
             if (endpoint.security) {
                 cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(404);

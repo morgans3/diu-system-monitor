@@ -4,10 +4,10 @@ const deletionExclusionList = [
     "TeamRequests",
     "Teams",
     "Capabilities",
-    "Organisations",
-    "Roles",
+    "Organisations", // TODO: check why this is in the exclusion list
+    "Roles", // TODO: check why this is in the exclusion list
     "TeamMembers",
-    "UserProfiles",
+    "UserProfiles", // TODO: check why this is in the exclusion list
     "Users",
 ];
 const putExclusionList = [
@@ -17,13 +17,13 @@ const putExclusionList = [
     "TeamMembers",
     "TeamRequests",
     "Teams",
-    "Capabilities",
-    "Roles",
-    "UserProfiles",
-    "VirtualWards",
-    "Dashboards",
-    "Organisations",
-    "SystemAlerts",
+    "Capabilities", // TODO: check why this is in the exclusion list
+    "Roles", // TODO: check why this is in the exclusion list
+    "UserProfiles", // TODO: check why this is in the exclusion list
+    "VirtualWards", // TODO: check why this is in the exclusion list
+    "Dashboards", // TODO: check why this is in the exclusion list
+    "Organisations", // TODO: check why this is in the exclusion list
+    "SystemAlerts", // TODO: check why this is in the exclusion list
 ];
 const postExclusionList = [
     "Demographics",
@@ -34,19 +34,19 @@ const postExclusionList = [
     "GPInpatients",
     "GovUKNotify",
     "NICEEvidenceSearch",
-    "Capabilities",
-    "Roles",
+    "Capabilities", // TODO: check why this is in the exclusion list
+    "Roles", // TODO: check why this is in the exclusion list
     "Teams",
     "UserProfiles",
     "Requests",
     "DocoboOutbound",
-    "HouseholdIsochrone",
+    "HouseholdIsochrone", // TODO: check why this is in the exclusion list
     "Trials",
     "Users",
-    "VirtualWards",
+    "VirtualWards", // TODO: check why this is in the exclusion list
 ];
 const exclusionList = ["Demographics", "Docobo", "DocoboOutbound", "MFA", "PostCodes", "Trials", "Users", "SearchUsers"];
-const getByParamsExclusionList = ["Confluence", "Capabilities", "Roles", "UserProfiles"];
+const getByParamsExclusionList = ["Confluence", "Capabilities", "Roles", "UserProfiles"]; // TODO: check why these are in the exclusion list
 
 const isInExclusionList = (tag) => {
     return exclusionList.includes(tag);

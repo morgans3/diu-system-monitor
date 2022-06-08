@@ -16,7 +16,6 @@ Cypress.Commands.add("niLogin", (user, loginpage) => {
 Cypress.Commands.add("createFixture", (endpointData) => {
     const bodyParams = {};
     if (endpointData.parameters && endpointData.parameters.length) {
-        console.log(endpointData.parameters);
         endpointData.parameters.forEach((data) => {
             bodyParams[data.name] = fakerData(data);
         });

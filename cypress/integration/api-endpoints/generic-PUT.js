@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("cypressaccounts").then((userDetails) => {
+    cy.fixture("secrets/cypressaccounts").then((userDetails) => {
         const adminUserData = {
             username: userDetails.admin_username,
             password: userDetails.admin_password,
@@ -67,16 +67,11 @@ describe("Test Endpoints", () => {
         console.log("Put endpoints...");
         console.log(testingPUTEndpointList);
 
-        // TODO: Add tests
         testingPUTEndpointList.forEach((endpoint) => {
+            // TODO: Switch from on-disk to in-memory storage
             let fixtureName = endpoint.tags[0].toLowerCase();
             fixtureName = fixtureName.replace(" ", "-");
             cy.fixture(fixtureName).then((bodyParams) => {
-                if (endpoint.responses["403"]) {
-                    cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                        cy.expect(response.status).to.be.equal(403);
-                    });
-                }
                 if (endpoint.security) {
                     cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
                         cy.expect(response.status).to.be.equal(200);
@@ -95,8 +90,8 @@ describe("Test Endpoints", () => {
             return x.requestType === "put" && !exclusions.isInPutExclusionList(x.tags[0]);
         });
 
-        // TODO: Add tests
         testingPUTEndpointList.forEach((endpoint) => {
+            // TODO: Switch from on-disk to in-memory storage
             let fixtureName = endpoint.tags[0].toLowerCase();
             fixtureName = fixtureName.replace(" ", "-");
             cy.fixture(fixtureName).then((bodyParams) => {
@@ -105,11 +100,6 @@ describe("Test Endpoints", () => {
                         bodyParams[key] += "1";
                     }
                 });
-                if (endpoint.responses["403"]) {
-                    cy.apiRequest(endpoint, JWTs.userJWT).then((response) => {
-                        cy.expect(response.status).to.be.equal(403);
-                    });
-                }
                 if (endpoint.security) {
                     cy.apiRequest(endpoint, JWTs.adminJWT, bodyParams).then((response) => {
                         cy.expect(response.status).to.be.equal(404);

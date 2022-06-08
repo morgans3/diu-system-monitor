@@ -4,7 +4,7 @@ Cypress.Commands.add("makeShellTeam", (username, JWT) => {
     console.log(username);
     const requestConfig = {
         method: "post",
-        url: settings.baseURL + "/teams/create",
+        url: settings.apiURL + "/teams/create",
         headers: {
             Authorization: JWT,
         },
@@ -25,7 +25,7 @@ Cypress.Commands.add("deleteShellTeam", (team, JWT) => {
     console.log(team);
     const requestConfig = {
         method: "delete",
-        url: settings.baseURL + "/teams/delete",
+        url: settings.apiURL + "/teams/delete",
         headers: {
             Authorization: JWT,
         },

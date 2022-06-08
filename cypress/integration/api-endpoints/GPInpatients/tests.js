@@ -14,7 +14,7 @@ before(() => {
         controller = new ApiBaseClass(swaggerData);
     });
 
-    cy.fixture("adcredentials").then((userDetails) => {
+    cy.fixture("secrets/adcredentials").then((userDetails) => {
         let ldapauth;
         let ldappass;
         userDetails.forEach((user) => {
