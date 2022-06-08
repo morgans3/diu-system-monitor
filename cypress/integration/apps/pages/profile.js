@@ -1,9 +1,13 @@
 /// <reference types="cypress" />
-const NumberHelper = require("../../helpers/number");
+const NumberHelper = require("../../../helpers/number");
+const settings = require("../../../../settings").settings;
 
 describe("Test profile page", () => {
     before(() => {
-        cy.login(false);
+        cy.visit(settings.appURL);
+        cy.fixture("secrets/cypressaccounts").then((userDetails) => {
+            cy.niLogin(userDetails, settings.appURL);
+        });
     });
 
     it("displays profile page", () => {
