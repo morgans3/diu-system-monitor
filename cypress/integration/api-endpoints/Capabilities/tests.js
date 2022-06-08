@@ -14,6 +14,25 @@ const fixture = {
     authoriser: "cypressTestUser",
     tags: "{string1,string2}",
 };
+
+const capabilityLinkFixture = {
+    capability_id: 0,
+    link_id: "cypressTestUser#Collaborative Partners",
+    link_type: "user",
+    valuejson: "allow",
+};
+
+const capabilityLinkSyncFixture = {
+    capabilities: [
+        {
+            id: 0,
+            valuejson: capabilityLinkFixture.valuejson,
+        },
+    ],
+    link_id: capabilityLinkFixture.link_id,
+    link_type: capabilityLinkFixture.link_type,
+};
+
 before(() => {
     // Act
     cy.getSwaggerData().then((swaggerData) => {
@@ -110,6 +129,8 @@ describe("Test Get All Method", () => {
                 response.body.forEach((capability) => {
                     if (capability.authoriser == "cypressTestUser") {
                         fixture.id = capability.id;
+                        capabilityLinkFixture.capability_id = capability.id;
+                        capabilityLinkSyncFixture.capabilities[0].id = capability.id;
                     }
                 });
             }
@@ -182,41 +203,6 @@ describe("Test get by ID Method", () => {
     });
 });
 
-describe("Test delete Method", () => {
-    let deleteEndpoint;
-    it("Check method exists", () => {
-        deleteEndpoint = endpoints.find((x) => {
-            return x.endpoint === "/capabilities/delete";
-        });
-        cy.expect(deleteEndpoint).to.be.a("object");
-    });
-
-    it("Test for get all pages (200)", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.adminJWT, { id: fixture.id }).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
-            if (response.body.length > 0) {
-                response.body.forEach((capability) => {
-                    if (capability.authoriser == "cypressTestUser") {
-                        fixture.id = capability.id;
-                    }
-                });
-            }
-        });
-    });
-
-    it("Test for delete capabilities (401)", () => {
-        cy.apiRequest(deleteEndpoint, "", {}).then((response) => {
-            cy.expect(response.status).to.be.equal(401);
-        });
-    });
-
-    it("Test for delete capabilities (403)", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, {}).then((response) => {
-            cy.expect(response.status).to.be.equal(403);
-        });
-    });
-});
-
 describe("Test get by Tag Method", () => {
     let getByTagEndpoint;
     it("Check method exists", () => {
@@ -282,6 +268,125 @@ describe("Test get by Multiple Tags (or) Method", () => {
     it("Test for get by Tag (401)", () => {
         cy.apiRequest(getByTagsOrEndpoint, "").then((response) => {
             cy.expect(response.status).to.be.equal(401);
+        });
+    });
+});
+
+describe("Test get by capabilities link create", () => {
+    let linkCreateEndpoint;
+    it("Check method exists", () => {
+        linkCreateEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/links/create";
+        });
+        cy.expect(linkCreateEndpoint).to.be.a("object");
+    });
+
+    it("Test for creating capability links (200)", () => {
+        cy.apiRequest(linkCreateEndpoint, JWTs.adminJWT, capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for creating capability links (401)", () => {
+        cy.apiRequest(linkCreateEndpoint, "", capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+
+    it("Test for creating capability links (403)", () => {
+        cy.apiRequest(linkCreateEndpoint, JWTs.userJWT, capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(403);
+        });
+    });
+});
+
+describe("Test get by capabilities link sync", () => {
+    let linkDeleteEndpoint;
+    it("Check method exists", () => {
+        linkDeleteEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/links/sync";
+        });
+        cy.expect(linkDeleteEndpoint).to.be.a("object");
+    });
+
+    it("Test for syncing capability links (200)", () => {
+        cy.apiRequest(linkDeleteEndpoint, JWTs.adminJWT, capabilityLinkSyncFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for syncing capability links (401)", () => {
+        cy.apiRequest(linkDeleteEndpoint, "", capabilityLinkSyncFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+
+    it("Test for syncing capability links (403)", () => {
+        cy.apiRequest(linkDeleteEndpoint, JWTs.userJWT, capabilityLinkSyncFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(403);
+        });
+    });
+});
+
+describe("Test get by capabilities link delete", () => {
+    let linkDeleteEndpoint;
+    it("Check method exists", () => {
+        linkDeleteEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/links/delete";
+        });
+        cy.expect(linkDeleteEndpoint).to.be.a("object");
+    });
+
+    it("Test for deleting capability links (200)", () => {
+        cy.apiRequest(linkDeleteEndpoint, JWTs.adminJWT, capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+        });
+    });
+
+    it("Test for deleting capability links (401)", () => {
+        cy.apiRequest(linkDeleteEndpoint, "", capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+
+    it("Test for deleting capability links (403)", () => {
+        cy.apiRequest(linkDeleteEndpoint, JWTs.userJWT, capabilityLinkFixture).then((response) => {
+            cy.expect(response.status).to.be.equal(403);
+        });
+    });
+});
+
+describe("Test delete Method", () => {
+    let deleteEndpoint;
+    it("Check method exists", () => {
+        deleteEndpoint = endpoints.find((x) => {
+            return x.endpoint === "/capabilities/delete";
+        });
+        cy.expect(deleteEndpoint).to.be.a("object");
+    });
+
+    it("Test for get all pages (200)", () => {
+        cy.apiRequest(deleteEndpoint, JWTs.adminJWT, { id: fixture.id }).then((response) => {
+            cy.expect(response.status).to.be.equal(200);
+            if (response.body.length > 0) {
+                response.body.forEach((capability) => {
+                    if (capability.authoriser == "cypressTestUser") {
+                        fixture.id = capability.id;
+                    }
+                });
+            }
+        });
+    });
+
+    it("Test for delete capabilities (401)", () => {
+        cy.apiRequest(deleteEndpoint, "", {}).then((response) => {
+            cy.expect(response.status).to.be.equal(401);
+        });
+    });
+
+    it("Test for delete capabilities (403)", () => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, {}).then((response) => {
+            cy.expect(response.status).to.be.equal(403);
         });
     });
 });
