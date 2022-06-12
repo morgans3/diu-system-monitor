@@ -1,6 +1,6 @@
 // @ts-check
 
-const baseURL = process.env.BASE_URL || "nhs-bi-platform.co.uk";
+const baseURL = process.env.BASE_URL || "dev.nexusintelligencenw.nhs.uk";
 module.exports.settings = {
     apiURL: process.env.API_URL || "https://api." + baseURL,
     appURL: process.env.APP_URL || "https://www." + baseURL + "/",

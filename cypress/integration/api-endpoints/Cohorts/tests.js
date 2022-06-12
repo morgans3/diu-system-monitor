@@ -185,7 +185,6 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Successful update (200) - User Cohort", () => {
-        userCohort.id = userCohort["_id"];
         userCohort.cohorturl = `{"test": "test"}`;
         userCohort.username = userCohort.user;
         cy.apiRequest(putEndpoint, JWTs.userJWT, userCohort).then((response) => {
@@ -196,14 +195,12 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Forbidden update (403) - Team Cohort", () => {
-        teamCohort.id = teamCohort["_id"];
         cy.apiRequest(putEndpoint, JWTs.adminJWT, teamCohort).then((response) => {
             cy.expect(response.status).to.be.equal(403);
         });
     });
 
     it("Test for Successful update (200) - Team Cohort", () => {
-        teamCohort.id = teamCohort["_id"];
         teamCohort.cohorturl = `{"test": "test"}`;
         teamCohort.username = teamCohort.user;
         cy.apiRequest(putEndpoint, JWTs.userJWT, teamCohort).then((response) => {
@@ -231,26 +228,26 @@ describe("Test DELETE Method", () => {
 
     it("Test for Successful delete (200) - User Cohort", () => {
         cy.wait(500); // write/read delayed for DynamoDB
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort["_id"] }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort.id }).then((response) => {
             cy.expect(response.status).to.be.equal(200);
             cy.log(response.body);
         });
     });
 
     it("Test for not found delete (404) - User Cohort", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort["_id"] }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort.id }).then((response) => {
             cy.expect(response.status).to.be.equal(404);
         });
     });
 
     it("Test for Forbidden delete (403) - Team Cohort", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.adminJWT, { id: teamCohort["_id"] }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.adminJWT, { id: teamCohort.id }).then((response) => {
             cy.expect(response.status).to.be.equal(403);
         });
     });
 
     it("Test for Successful delete (200) - Team Cohort", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: teamCohort["_id"] }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: teamCohort.id }).then((response) => {
             cy.expect(response.status).to.be.equal(200);
             cy.log(response.body);
         });

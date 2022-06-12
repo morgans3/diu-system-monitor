@@ -187,7 +187,6 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Successful update (200) - User Cohort", () => {
-        userCohort.id = userCohort["_id"];
         userCohort.cohorturl = `{"test": "test"}`;
         cy.apiRequest(putEndpoint, JWTs.userJWT, userCohort).then((response) => {
             cy.expect(response.status).to.be.equal(200);
@@ -197,14 +196,12 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Forbidden update (403) - Team Cohort", () => {
-        teamCohort.id = teamCohort["_id"];
         cy.apiRequest(putEndpoint, JWTs.adminJWT, teamCohort).then((response) => {
             cy.expect(response.status).to.be.equal(403);
         });
     });
 
     it("Test for Successful update (200) - Team Cohort", () => {
-        teamCohort.id = teamCohort["_id"];
         teamCohort.cohorturl = `{"test": "test"}`;
         cy.apiRequest(putEndpoint, JWTs.userJWT, teamCohort).then((response) => {
             cy.expect(response.status).to.be.equal(200);

@@ -108,9 +108,9 @@ describe("Test POST Method", () => {
         cy.apiRequest(postEndpoint, JWTs.userJWT, params).then((response) => {
             cy.expect(response.status).to.be.equal(200);
             cy.log(response.body);
-            cy.expect(response.body["_id"]).to.be.a("string");
+            cy.expect(response.body.id).to.be.a("string");
             request = params;
-            request.id = response.body["_id"];
+            request.id = response.body.id;
         });
 
         cy.wait(500); // write/read delayed for DynamoDB
