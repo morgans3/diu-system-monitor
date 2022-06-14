@@ -61,13 +61,7 @@ describe("Test Endpoints", () => {
 
     it("Check GET BY PARAMS endpoints - SUCCESS (200)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return (
-                x.requestType === "get" &&
-                x.parameters &&
-                !exclusions.isInExclusionList(x.tags[0]) &&
-                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
-                x.endpoint.includes("{")
-            );
+            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && x.endpoint.includes("{");
         });
         console.log("Get by parameters endpoints...");
 
@@ -87,13 +81,7 @@ describe("Test Endpoints", () => {
 
     it("Check GET BY PARAMS endpoints - BAD Requests (404)", () => {
         const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return (
-                x.requestType === "get" &&
-                x.parameters &&
-                !exclusions.isInExclusionList(x.tags[0]) &&
-                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
-                x.endpoint.includes("{")
-            );
+            return x.requestType === "get" && x.parameters && !exclusions.isInExclusionList(x.tags[0]) && x.endpoint.includes("{");
         });
         console.log("Get by parameters endpoints...");
 
