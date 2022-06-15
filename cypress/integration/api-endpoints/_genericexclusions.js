@@ -1,4 +1,5 @@
 const manualTestList = [
+    "AccessLogs",
     "Capabilities",
     "Cohorts",
     "CVICohorts",
@@ -8,8 +9,10 @@ const manualTestList = [
     "GovUKNotify",
     "GPInpatients",
     "HouseholdIsochrone",
+    "LPRESViewer",
     "MFA",
     "NICEEvidenceSearch",
+    "OpenSource",
     "Password",
     "PostCodes",
     "Requests",
@@ -21,12 +24,20 @@ const manualTestList = [
     "Teams",
     "Trials",
     "Users",
+    "VirtualWards",
 ];
 
 const isInExclusionList = (tag) => {
     return manualTestList.includes(tag);
 };
 
+const getByParamsList = ["Confluence", "Mosaic", "PatientHistory", "PatientLists", "SearchTeams"];
+
+const getByParamsGenericList = (tag) => {
+    return getByParamsList.includes(tag);
+};
+
 module.exports.Exclusions = {
     isInExclusionList,
+    getByParamsGenericList,
 };

@@ -39,6 +39,31 @@ function fakerData(data) {
     }
 }
 
+const replaceParameters = function (endpoint, isBadParmaters) {
+    const output = JSON.parse(JSON.stringify(endpoint));
+    if (isBadParmaters) {
+        output.parameters.forEach((data) => {
+            output.endpoint.includes("{")
+                ? (output.endpoint = output.endpoint.replace("{" + data.name + "}", "0"))
+                : (output.endpoint = addParamToRequest(output.endpoint, data, "0"));
+        });
+    } else {
+        output.parameters.forEach((data) => {
+            output.endpoint.includes("{")
+                ? (output.endpoint = output.endpoint.replace("{" + data.name + "}", data.example.toString().replace("#", "%23")))
+                : (output.endpoint = addParamToRequest(output.endpoint, data, data.example));
+        });
+    }
+    console.log(output);
+    return output;
+};
+
+function addParamToRequest(endpoint, data, value) {
+    endpoint.includes("?") ? (endpoint += "&" + data.name + "=" + value) : (endpoint += "?" + data.name + "=" + value);
+    return endpoint;
+}
+
 module.exports.Modifiers = {
     newBodyParameters,
+    replaceParameters,
 };
