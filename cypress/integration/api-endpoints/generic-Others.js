@@ -110,7 +110,6 @@ describe("Test Endpoints", () => {
                 requestType: "put",
                 endpoint: endpoint.endpoint.replace("/delete", "/update"),
             };
-            endpoint.bodyParams = modifiers.modifyBodyParameters(endpoint, true);
             if (endpoint.security) {
                 cy.apiRequest(putEndpoint, JWTs.adminJWT, endpoint.bodyParams).then((response) => {
                     cy.expect(response.status).to.be.equal(200);
@@ -118,25 +117,6 @@ describe("Test Endpoints", () => {
             } else {
                 cy.apiRequest(putEndpoint, "", endpoint.bodyParams).then((response) => {
                     cy.expect(response.status).to.be.equal(200);
-                });
-            }
-        });
-    });
-
-    it("Check PUT endpoints - Not Found (404)", () => {
-        endpoints.forEach((endpoint) => {
-            const putEndpoint = {
-                requestType: "put",
-                endpoint: endpoint.endpoint.replace("/delete", "/update"),
-            };
-            const wrongItem = modifiers.modifyBodyParameters(endpoint, false);
-            if (endpoint.security) {
-                cy.apiRequest(putEndpoint, JWTs.adminJWT, wrongItem).then((response) => {
-                    cy.expect(response.status).to.be.equal(404);
-                });
-            } else {
-                cy.apiRequest(putEndpoint, "", wrongItem).then((response) => {
-                    cy.expect(response.status).to.be.equal(404);
                 });
             }
         });
@@ -198,6 +178,27 @@ describe("Test Endpoints", () => {
                 cy.apiRequest(endpoint, "", endpoint.bodyParams).then((response) => {
                     cy.expect(response.status).to.be.equal(404);
                 });
+            }
+        });
+    });
+
+    it("Check PUT endpoints - Not Found (404)", () => {
+        endpoints.forEach((endpoint) => {
+            const putEndpoint = {
+                requestType: "put",
+                endpoint: endpoint.endpoint.replace("/delete", "/update"),
+            };
+            const fullEndpoint = controller.orderedEndpointData.find((point) => point.endpoint === putEndpoint.endpoint);
+            if (fullEndpoint.responses["404"]) {
+                if (endpoint.security) {
+                    cy.apiRequest(putEndpoint, JWTs.adminJWT, endpoint.bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
+                } else {
+                    cy.apiRequest(putEndpoint, "", endpoint.bodyParams).then((response) => {
+                        cy.expect(response.status).to.be.equal(404);
+                    });
+                }
             }
         });
     });
