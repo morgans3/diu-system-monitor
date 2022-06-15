@@ -18,6 +18,7 @@ import "./commands";
 import "./crossfilter";
 import "./swagger";
 import "./teams";
+import "./verificationcodes";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
