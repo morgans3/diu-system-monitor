@@ -1,17 +1,25 @@
 /// <reference types="cypress" />
+const settings = require("../../../../settings").settings;
 
-describe("Apps", () => {
-    beforeEach(() => {
-        cy.login(false);
-        cy.visit("http://localhost:4200/apps");
+describe("Dashboard store", () => {
+    before(() => {
+        cy.visit(settings.appURL);
+        cy.fixture("secrets/cypressaccounts").then((userDetails) => {
+            cy.niLogin(userDetails, settings.appURL);
+        });
     });
 
-    it("has list of apps", () => {
+    it("displays dashboard store page", () => {
+        cy.get(`a[href*="apps"]`).click({ force: true });
+        cy.url().should("include", "apps");
+    });
+
+    it("has list of dashboards", () => {
         // Query number of tiles
         cy.get("app-application-tile").should("have.length.gt", 0);
     });
 
-    it("each app will open", () => {
+    it("each dashboard will open", () => {
         // Awaiting changes for installations
     });
 });

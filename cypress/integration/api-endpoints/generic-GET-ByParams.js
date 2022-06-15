@@ -1,11 +1,13 @@
 const ApiBaseClass = require("../../classes/api-base-class");
 const exclusions = require("./_genericexclusions").Exclusions;
 let controller;
+let testingGETBYEndpointList;
 let swaggerResponse;
 const JWTs = {
     userJWT: "",
     adminJWT: "",
 };
+const modifiers = require("../../helpers/parameters").Modifiers;
 
 before(() => {
     cy.getSwaggerData().then((swaggerData) => {
@@ -60,25 +62,24 @@ describe("Test Endpoints", () => {
     });
 
     it("Check GET BY PARAMS endpoints - SUCCESS (200)", () => {
-        const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
+        testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
             return (
                 x.requestType === "get" &&
                 x.parameters &&
-                !exclusions.isInExclusionList(x.tags[0]) &&
-                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
-                x.endpoint.includes("{")
+                (exclusions.getByParamsGenericList(x.tags[0]) || x.endpoint.includes("userprofiles/{userId}"))
             );
         });
         console.log("Get by parameters endpoints...");
+        console.log(testingGETBYEndpointList);
 
         testingGETBYEndpointList.forEach((endpoint) => {
-            const getAllEndpoint = controller.getAllTags[endpoint.tags[0]]; // TODO: Standardisation of API?
+            const requestEndpoint = modifiers.replaceParameters(endpoint, false);
             if (endpoint.security) {
-                cy.apiGetByParamsRequest(endpoint, JWTs.adminJWT, getAllEndpoint).then((response) => {
+                cy.apiRequest(requestEndpoint, JWTs.adminJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(200);
                 });
             } else {
-                cy.apiGetByParamsRequest(endpoint, "", getAllEndpoint).then((response) => {
+                cy.apiRequest(requestEndpoint, "").then((response) => {
                     cy.expect(response.status).to.be.equal(200);
                 });
             }
@@ -86,24 +87,14 @@ describe("Test Endpoints", () => {
     });
 
     it("Check GET BY PARAMS endpoints - BAD Requests (404)", () => {
-        const testingGETBYEndpointList = controller.orderedEndpointData.filter((x) => {
-            return (
-                x.requestType === "get" &&
-                x.parameters &&
-                !exclusions.isInExclusionList(x.tags[0]) &&
-                !exclusions.isInGetByParamsExclusionList(x.tags[0]) &&
-                x.endpoint.includes("{")
-            );
-        });
-        console.log("Get by parameters endpoints...");
-
         testingGETBYEndpointList.forEach((endpoint) => {
+            const requestEndpoint = modifiers.replaceParameters(endpoint, true);
             if (endpoint.security) {
-                cy.apiGetByParamsBadRequest(endpoint, JWTs.adminJWT).then((response) => {
+                cy.apiRequest(requestEndpoint, JWTs.adminJWT).then((response) => {
                     cy.expect(response.status).to.be.equal(404);
                 });
             } else {
-                cy.apiGetByParamsBadRequest(endpoint, "").then((response) => {
+                cy.apiRequest(requestEndpoint, "").then((response) => {
                     cy.expect(response.status).to.be.equal(404);
                 });
             }

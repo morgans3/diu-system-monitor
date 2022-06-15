@@ -62,7 +62,7 @@ describe("Test Security - POST, PUT, DELETE", () => {
 
     it("Check POST endpoints", () => {
         const testingPOSTEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "post" && !exclusions.isInPOSTExclusionList(x.tags[0]);
+            return x.requestType === "post" && !exclusions.isInExclusionList(x.tags[0]);
         });
         console.log("Post endpoints...");
         console.log(testingPOSTEndpointList);
@@ -85,7 +85,7 @@ describe("Test Security - POST, PUT, DELETE", () => {
 
     it("Check PUT endpoints", () => {
         const testingPUTEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "put" && !exclusions.isInPutExclusionList(x.tags[0]);
+            return x.requestType === "put" && !exclusions.isInExclusionList(x.tags[0]);
         });
         console.log("Put endpoints...");
         console.log(testingPUTEndpointList);
@@ -108,7 +108,7 @@ describe("Test Security - POST, PUT, DELETE", () => {
 
     it("Check DELETE endpoints", () => {
         const testingDELETEEndpointList = controller.orderedEndpointData.filter((x) => {
-            return x.requestType === "delete" && !exclusions.isInDeletionExclusionList(x.tags[0]);
+            return x.requestType === "delete" && !exclusions.isInExclusionList(x.tags[0]);
         });
         console.log("Delete endpoints...");
         console.log(testingDELETEEndpointList);

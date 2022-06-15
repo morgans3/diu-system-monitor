@@ -143,7 +143,7 @@ describe("Test GET Methods", () => {
     });
 
     it("Check get by params - ID", () => {
-        getEndpoint.endpoint = "/teammembers/" + member["_id"];
+        getEndpoint.endpoint = "/teammembers/" + member.id;
         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
             cy.expect(response.status).to.be.equal(200);
         });
@@ -188,7 +188,6 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Unsuccessful update (403)", () => {
-        member.id = member["_id"];
         member.enddate = "2022-01-01T00:00:00.000Z";
         cy.apiRequest(putEndpoint, JWTs.adminJWT, member).then((response) => {
             cy.expect(response.status).to.be.equal(403);
@@ -196,7 +195,6 @@ describe("Test PUT Method", () => {
     });
 
     it("Test for Successful update (200)", () => {
-        member.id = member["_id"];
         member.enddate = "2022-01-01T00:00:00.000Z";
         cy.apiRequest(putEndpoint, JWTs.userJWT, member).then((response) => {
             cy.expect(response.status).to.be.equal(200);
@@ -223,14 +221,14 @@ describe("Test DELETE Method", () => {
 
     it("Test for Successful delete (200)", () => {
         cy.wait(500); // write/read delayed for DynamoDB
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: member["_id"], teamcode: shellTeam.code }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: member.id, teamcode: shellTeam.code }).then((response) => {
             cy.expect(response.status).to.be.equal(200);
             cy.log(response.body);
         });
     });
 
     it("Test for not found delete (404)", () => {
-        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: member["_id"], teamcode: shellTeam.code }).then((response) => {
+        cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: member.id, teamcode: shellTeam.code }).then((response) => {
             cy.expect(response.status).to.be.equal(404);
         });
     });

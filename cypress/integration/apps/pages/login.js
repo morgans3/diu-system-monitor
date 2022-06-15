@@ -1,8 +1,9 @@
 /// <reference types="cypress" />
+const settings = require("../../../../settings").settings;
 
 describe("Test App", () => {
-    beforeEach(() => {
-        cy.visit("http://localhost:4200");
+    before(() => {
+        cy.visit(settings.appURL);
     });
 
     it("displays login page", () => {
@@ -12,8 +13,8 @@ describe("Test App", () => {
     });
 
     it("attempts login", () => {
-        cy.login(false).then(() => {
-            cy.url().should("include", "landing");
+        cy.fixture("secrets/cypressaccounts").then((userDetails) => {
+            cy.niLogin(userDetails, settings.appURL);
         });
     });
 });

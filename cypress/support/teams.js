@@ -30,7 +30,7 @@ Cypress.Commands.add("deleteShellTeam", (team, JWT) => {
             Authorization: JWT,
         },
         body: {
-            _id: team["_id"],
+            id: team.id,
             code: team.code,
         },
     };
