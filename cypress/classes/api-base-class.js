@@ -18,8 +18,6 @@ class ApiBaseClass {
 
     orderedEndpointData = [];
 
-    organiseEndpoints = {};
-
     getAllTags = {};
 
     constructor(swagggerData) {
@@ -28,42 +26,16 @@ class ApiBaseClass {
     }
 
     reorderFixtureData(swagggerData) {
-        swagggerData.forEach((endpointData) => {
-            this.organiseEndpoints[endpointData.endpoint] = false;
-        });
-        swagggerData.forEach((endpointData) => {
-            const arrEndpointData = endpointData.endpoint.split("/");
-            if (endpointData.endpoint.includes("/create")) {
-                if (arrEndpointData[arrEndpointData.length - 1] === "create") {
-                    this.orderedEndpointData.push(endpointData);
-                    this.organiseEndpoints[endpointData.endpoint] = true;
-                }
-            }
-        });
-        swagggerData.forEach((endpointData) => {
-            const arrEndpointData = endpointData.endpoint.split("/");
-            if (!this.organiseEndpoints[endpointData.endpoint]) {
-                if (!endpointData.endpoint.includes("/delete")) {
-                    if (arrEndpointData[arrEndpointData.length - 1] !== "delete") {
-                        if (this.isGetAll(arrEndpointData)) {
-                            this.getAllTags[endpointData.tags[0]] = endpointData;
-                        }
-                        this.orderedEndpointData.push(endpointData);
-                        this.organiseEndpoints[endpointData.endpoint] = true;
-                    }
-                }
-            }
-        });
-        swagggerData.forEach((endpointData) => {
-            const arrEndpointData = endpointData.endpoint.split("/");
-            if (!this.organiseEndpoints[endpointData.endpoint]) {
-                if (endpointData.endpoint.includes("/delete")) {
-                    if (arrEndpointData[arrEndpointData.length - 1] === "delete") {
-                        this.orderedEndpointData.push(endpointData);
-                        this.organiseEndpoints[endpointData.endpoint] = true;
-                    }
-                }
-            }
+        const orderedArray = [
+            { condition: "includes", value: "/create" },
+            { condition: "notincludes", value: "/delete" },
+            { condition: "includes", value: "/delete" },
+        ];
+        orderedArray.forEach((order) => {
+            const matches = swagggerData.filter((endpoint) => {
+                return order.condition === "includes" ? endpoint.endpoint.includes(order.value) : !endpoint.endpoint.includes(order.value);
+            });
+            this.orderedEndpointData = this.orderedEndpointData.concat(matches);
         });
     }
 

@@ -96,7 +96,7 @@ describe("Test POST Method", () => {
 
     it("Test for Bad Request (400)", () => {
         cy.apiRequest(postEndpoint, JWTs.userJWT, {}).then((response) => {
-            cy.expect(response.status).to.be.equal(400);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(400));
         });
     });
 
@@ -107,7 +107,7 @@ describe("Test POST Method", () => {
             username: JWTs.username,
         };
         cy.apiRequest(postEndpoint, JWTs.userJWT, params).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
             cy.expect(response.body.data).to.be.a("object");
             userCohort = response.body.data;
@@ -124,7 +124,7 @@ describe("Test POST Method", () => {
             teamcode: shellTeam.code,
         };
         cy.apiRequest(postEndpoint, JWTs.userJWT, params).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
             cy.expect(response.body.data).to.be.a("object");
             teamCohort = response.body.data;
@@ -143,28 +143,28 @@ describe("Test GET Method", () => {
 
     it("Check get all", () => {
         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
         });
     });
 
     it("Check get by params - Name", () => {
         getEndpoint.endpoint = getEndpoint.endpoint + "?name=" + userCohort.cohortName;
         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
         });
     });
 
     it("Check get by params - Username", () => {
         getEndpoint.endpoint = getEndpoint.endpoint + "?username=" + userCohort.user;
         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
         });
     });
 
     it("Check get by params - Teamcode", () => {
         getEndpoint.endpoint = getEndpoint.endpoint + "?teamcode=" + teamCohort.teamcode;
         cy.apiRequest(getEndpoint, JWTs.userJWT).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
         });
     });
 });
@@ -180,7 +180,7 @@ describe("Test PUT Method", () => {
 
     it("Test for Bad request update (400)", () => {
         cy.apiRequest(putEndpoint, JWTs.userJWT, {}).then((response) => {
-            cy.expect(response.status).to.be.equal(400);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(400));
         });
     });
 
@@ -189,7 +189,7 @@ describe("Test PUT Method", () => {
         userCohort.cohorturl = `{"test": "test"}`;
         userCohort.username = userCohort.user;
         cy.apiRequest(putEndpoint, JWTs.userJWT, userCohort).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
             cy.expect(response.body.data).to.be.a("object");
         });
@@ -198,7 +198,7 @@ describe("Test PUT Method", () => {
     it("Test for Forbidden update (403) - Team Cohort", () => {
         teamCohort.id = teamCohort["_id"];
         cy.apiRequest(putEndpoint, JWTs.adminJWT, teamCohort).then((response) => {
-            cy.expect(response.status).to.be.equal(403);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(403));
         });
     });
 
@@ -207,7 +207,7 @@ describe("Test PUT Method", () => {
         teamCohort.cohorturl = `{"test": "test"}`;
         teamCohort.username = teamCohort.user;
         cy.apiRequest(putEndpoint, JWTs.userJWT, teamCohort).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
             cy.expect(response.body.data).to.be.a("object");
         });
@@ -225,33 +225,33 @@ describe("Test DELETE Method", () => {
 
     it("Test for Bad request delete (400)", () => {
         cy.apiRequest(deleteEndpoint, JWTs.userJWT, {}).then((response) => {
-            cy.expect(response.status).to.be.equal(400);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
         });
     });
 
     it("Test for Successful delete (200) - User Cohort", () => {
         cy.wait(500); // write/read delayed for DynamoDB
         cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort["_id"] }).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
         });
     });
 
     it("Test for not found delete (404) - User Cohort", () => {
         cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: userCohort["_id"] }).then((response) => {
-            cy.expect(response.status).to.be.equal(404);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(404));
         });
     });
 
     it("Test for Forbidden delete (403) - Team Cohort", () => {
         cy.apiRequest(deleteEndpoint, JWTs.adminJWT, { id: teamCohort["_id"] }).then((response) => {
-            cy.expect(response.status).to.be.equal(403);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(403));
         });
     });
 
     it("Test for Successful delete (200) - Team Cohort", () => {
         cy.apiRequest(deleteEndpoint, JWTs.userJWT, { id: teamCohort["_id"] }).then((response) => {
-            cy.expect(response.status).to.be.equal(200);
+            cy.expect(response.status).to.be.oneOf(cy.whatToExpect(200));
             cy.log(response.body);
         });
     });
